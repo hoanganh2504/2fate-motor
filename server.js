@@ -3283,10 +3283,11 @@ setInterval(() => {
 console.log("✅ Đã khởi động scheduled job: Tự động cập nhật đơn hàng hết hạn mỗi phút");
 
 // ================== START SERVER ==================
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 server.listen(PORT, () => {
-  console.log(`🚀 Server chạy tại: http://localhost:${PORT}`);
-  console.log(`👤 User có thể truy cập: http://localhost:${PORT}`);
-  console.log(`🔐 Admin có thể truy cập: http://localhost:${PORT}/admin`);
-  console.log(`📧 Contacts admin: http://localhost:${PORT}/admin/contact_admin`);
+  console.log(`🚀 Server đang chạy tại cổng ${PORT}`);
+  console.log(`👤 User truy cập: /`);
+  console.log(`🔐 Admin truy cập: /admin`);
+  console.log(`📧 Contact admin: /admin/contact_admin`);
 });
