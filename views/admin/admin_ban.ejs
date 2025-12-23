@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Yêu cầu mở khóa - Bike Store</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .appeal-card {
+            background: white;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+
+        .appeal-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .appeal-card.pending {
+            border-left-color: #ffc107;
+        }
+
+        .appeal-card.processing {
+            border-left-color: #0dcaf0;
+        }
+
+        .appeal-card.replied {
+            border-left-color: #198754;
+        }
+
+        .appeal-card.closed {
+            border-left-color: #6c757d;
+            opacity: 0.7;
+        }
+
+        .appeal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .appeal-message {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .appeal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            font-size: 2rem;
+            margin: 0;
+            color: #667eea;
+        }
+
+        .stat-box p {
+            margin: 5px 0 0 0;
+            color: #6c757d;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .filter-tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../partials/header_admin') %>
+        <div class="container-fluid">
+            <div class="row">
+                <%- include('../partials/sidebar_admin') %>
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+                        <h1 class="mb-4 text-primary">
+                            <i class="bi bi-shield-exclamation"></i> Yêu cầu mở khóa tài khoản
+                        </h1>
+
+                        <!-- Statistics -->
+                        <div class="stats-row">
+                            <div class="stat-box">
+                                <h3>
+                                    <%= appeals.length %>
+                                </h3>
+                                <p><i class="bi bi-envelope"></i> Tổng yêu cầu</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>
+                                    <%= appeals.filter(a=> a.status === 'pending').length %>
+                                </h3>
+                                <p><i class="bi bi-hourglass-split"></i> Chờ xử lý</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>
+                                    <%= appeals.filter(a=> a.status === 'replied').length %>
+                                </h3>
+                                <p><i class="bi bi-check-circle"></i> Đã duyệt</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>
+                                    <%= appeals.filter(a=> a.status === 'closed').length %>
+                                </h3>
+                                <p><i class="bi bi-x-circle"></i> Đã từ chối</p>
+                            </div>
+                        </div>
+
+                        <!-- Filter Tabs -->
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" onclick="filterAppeals('all')">
+                                Tất cả (<%= appeals.length %>)
+                            </button>
+                            <button class="filter-tab" onclick="filterAppeals('pending')">
+                                Chờ xử lý (<%= appeals.filter(a=> a.status === 'pending').length %>)
+                            </button>
+                            <button class="filter-tab" onclick="filterAppeals('replied')">
+                                Đã duyệt (<%= appeals.filter(a=> a.status === 'replied').length %>)
+                            </button>
+                            <button class="filter-tab" onclick="filterAppeals('closed')">
+                                Đã từ chối (<%= appeals.filter(a=> a.status === 'closed').length %>)
+                            </button>
+                        </div>
+
+                        <!-- Appeals List -->
+                        <div id="appealsList">
+                            <% if (appeals.length===0) { %>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> Chưa có yêu cầu mở khóa nào.
+                                </div>
+                                <% } else { %>
+                                    <% appeals.forEach(appeal=> { %>
+                                        <div class="appeal-card <%= appeal.status %>"
+                                            data-status="<%= appeal.status %>">
+                                            <div class="appeal-header">
+                                                <div class="user-info">
+                                                    <div class="user-avatar">
+                                                        <%= appeal.username ? appeal.username.charAt(0).toUpperCase()
+                                                            : '?' %>
+                                                    </div>
+                                                    <div>
+                                                        <h5 style="margin: 0;">
+                                                            <%= appeal.username || 'Unknown' %>
+                                                                <% if (appeal.account_status==='banned' ) { %>
+                                                                    <span class="badge bg-danger ms-2">
+                                                                        <i class="bi bi-ban"></i> Banned
+                                                                    </span>
+                                                                    <% } else if (appeal.account_status==='suspended' )
+                                                                        { %>
+                                                                        <span class="badge bg-warning text-dark ms-2">
+                                                                            <i class="bi bi-pause-circle"></i> Suspended
+                                                                        </span>
+                                                                        <% } else { %>
+                                                                            <span class="badge bg-success ms-2">
+                                                                                <i class="bi bi-check-circle"></i>
+                                                                                Active
+                                                                            </span>
+                                                                            <% } %>
+                                                        </h5>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-envelope"></i>
+                                                            <%= appeal.email %>
+                                                                <span class="ms-3">
+                                                                    <i class="bi bi-calendar"></i>
+                                                                    <%= new
+                                                                        Date(appeal.created_at).toLocaleString('vi-VN')
+                                                                        %>
+                                                                </span>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <% if (appeal.status==='pending' ) { %>
+                                                        <span class="badge bg-warning">
+                                                            <i class="bi bi-hourglass-split"></i> Chờ xử lý
+                                                        </span>
+                                                        <% } else if (appeal.status==='processing' ) { %>
+                                                            <span class="badge bg-info">
+                                                                <i class="bi bi-gear"></i> Đang xử lý
+                                                            </span>
+                                                            <% } else if (appeal.status==='replied' ) { %>
+                                                                <span class="badge bg-success">
+                                                                    <i class="bi bi-check-circle"></i> Đã duyệt
+                                                                </span>
+                                                                <% } else { %>
+                                                                    <span class="badge bg-secondary">
+                                                                        <i class="bi bi-x-circle"></i> Đã từ chối
+                                                                    </span>
+                                                                    <% } %>
+                                                </div>
+                                            </div>
+
+                                            <% if (appeal.ban_reason) { %>
+                                                <div class="alert alert-danger mb-2">
+                                                    <strong>Lý do bị cấm ban đầu:</strong><br>
+                                                    <%= appeal.ban_reason %>
+                                                        <% if (appeal.banned_at) { %>
+                                                            <br><small class="text-muted">
+                                                                Cấm lúc: <%= new
+                                                                    Date(appeal.banned_at).toLocaleString('vi-VN') %>
+                                                            </small>
+                                                            <% } %>
+                                                </div>
+                                                <% } %>
+
+                                                    <div class="appeal-message">
+                                                        <%= appeal.message %>
+                                                    </div>
+
+                                                    <% if (appeal.status==='pending' || appeal.status==='processing' ) {
+                                                        %>
+                                                        <div class="appeal-actions">
+                                                            <button class="btn btn-success btn-sm"
+                                                                onclick="approveAppeal('<%= appeal.id %>', '<%= appeal.user_id %>')">
+                                                                <i class="bi bi-check-circle"></i> Phê duyệt mở khóa
+                                                            </button>
+                                                            <button class="btn btn-danger btn-sm"
+                                                                onclick="rejectAppeal('<%= appeal.id %>')">
+                                                                <i class="bi bi-x-circle"></i> Từ chối
+                                                            </button>
+                                                            <button class="btn btn-secondary btn-sm"
+                                                                onclick="viewUser('<%= appeal.user_id %>')">
+                                                                <i class="bi bi-person"></i> Xem tài khoản
+                                                            </button>
+                                                        </div>
+                                                        <% } %>
+                                        </div>
+                                        <% }); %>
+                                            <% } %>
+                        </div>
+                    </main>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Filter appeals
+            function filterAppeals(status) {
+                const cards = document.querySelectorAll('.appeal-card');
+                const tabs = document.querySelectorAll('.filter-tab');
+
+                tabs.forEach(tab => tab.classList.remove('active'));
+                event.target.classList.add('active');
+
+                cards.forEach(card => {
+                    if (status === 'all' || card.dataset.status === status) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Approve appeal
+            async function approveAppeal(appealId, userId) {
+                const reason = prompt('Lý do phê duyệt (tùy chọn):');
+                if (reason === null) return;
+
+                if (!confirm('Xác nhận mở khóa tài khoản này?')) return;
+
+                try {
+                    const response = await fetch(`/admin/ban-appeals/approve/${appealId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId, reason })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('✅ Đã phê duyệt và mở khóa tài khoản!');
+                        location.reload();
+                    } else {
+                        alert('❌ ' + (data.message || 'Không thể phê duyệt!'));
+                    }
+                } catch (error) {
+                    alert('❌ Lỗi: ' + error.message);
+                }
+            }
+
+            // Reject appeal
+            async function rejectAppeal(appealId) {
+                const reason = prompt('Lý do từ chối:');
+                if (!reason) {
+                    alert('Vui lòng nhập lý do từ chối!');
+                    return;
+                }
+
+                if (!confirm('Xác nhận từ chối yêu cầu này?')) return;
+
+                try {
+                    const response = await fetch(`/admin/ban-appeals/reject/${appealId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ reason })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('✅ Đã từ chối yêu cầu!');
+                        location.reload();
+                    } else {
+                        alert('❌ ' + (data.message || 'Không thể từ chối!'));
+                    }
+                } catch (error) {
+                    alert('❌ Lỗi: ' + error.message);
+                }
+            }
+
+            // View user
+            function viewUser(userId) {
+                window.location.href = `/admin/users?highlight=${userId}`;
+            }
+        </script>
+        <%- include('../partials/footer_admin') %>
+</body>
+
+</html>

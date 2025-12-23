@@ -1,0 +1,84 @@
+/* Banner */
+.discount-banner {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #ff4b2b, #ff416c);
+    color: white;
+}
+
+.discount-banner h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.discount-banner p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.discount-banner button {
+    background: white;
+    color: #ff416c;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.discount-banner button:hover {
+    background: #222;
+    color: white;
+}
+
+/* Discount Items */
+.discount-items {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.discount-items h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.discount-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.discount-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.discount-card:hover {
+    transform: translateY(-5px);
+}
+
+.discount-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.discount-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: gray;
+}
+
+.new-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff416c;
+}

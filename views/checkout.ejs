@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Thanh toán --- 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+        <main class="checkout-page">
+            <section class="checkout-card">
+                <div class="left">
+                    <div class="brand">
+                        <img src="/images/logo.png" alt="2FATE" class="logo" onerror="this.style.display='none'">
+                        <h1>Thanh toán bằng QR</h1>
+                        <p class="muted">Quét mã bằng app ngân hàng hoặc ví điện tử (MoMo, ZaloPay...).</p>
+                    </div>
+                    <div class="qr-area">
+                        <div class="qr-box">
+                            <img src="<%= qrUrl %>" alt="QR Code" class="qr-img">
+                        </div>
+                        <div class="qr-meta">
+                            <div class="meta-row">
+                                <span class="meta-label">Ngân hàng</span>
+                                <span class="meta-value">ACB</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label">Số tài khoản</span>
+                                <span class="meta-value">123456789</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label">Chủ tài khoản</span>
+                                <span class="meta-value">Nguyen Van A</span>
+                            </div>
+                            <div class="meta-row total">
+                                <span class="meta-label">Tổng</span>
+                                <span class="meta-value">
+                                    <%= total.toLocaleString() %> VND
+                                </span>
+                            </div>
+                            <div class="meta-row small muted">
+                                <span>Nội dung</span>
+                                <span><small>Tự động sinh: DONHANG_...</small></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notice">
+                        <strong>Gợi ý:</strong> Sau khi quét, app ngân hàng sẽ hiện thông tin chuyển khoản. Kiểm tra số
+                        tiền & nội dung trước khi xác nhận.
+                    </div>
+                </div>
+                <aside class="right">
+                    <div class="summary">
+                        <h2>Chi tiết đơn hàng</h2>
+                        <div class="shipping-info">
+                            <h3>Thông tin giao hàng</h3>
+                            <p><strong>Địa chỉ:</strong>
+                                <%= address ? address : "Chưa có" %>
+                            </p>
+                            <p><strong>Số điện thoại:</strong>
+                                <%= phone ? phone : "Chưa có" %>
+                            </p>
+                            <a href="/checkout/address" class="edit-link">Chỉnh sửa</a>
+                        </div>
+
+                        <div class="divider"></div>
+                        <div class="items">
+                            <% cartItems.forEach(item=> { %>
+                                <div class="item-row">
+                                    <img src="<%= item.image %>" alt="<%= item.name %>" class="mini-img">
+                                    <div class="item-info">
+                                        <div class="name">
+                                            <%= item.name %>
+                                        </div>
+                                        <div class="meta">
+                                            <%= item.color %> • x<%= item.quantity %>
+                                        </div>
+                                    </div>
+                                    <div class="price">
+                                        <%= (item.price * item.quantity).toLocaleString() %>đ
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="total-row">
+                            <div>Tạm tính</div>
+                            <div class="bold">
+                                <%= total.toLocaleString() %> VND
+                            </div>
+                        </div>
+                        <div class="countdown">
+                            <div>Thời gian thanh toán: <span id="count">15:00</span></div>
+                            <progress id="progress" value="100" max="100"></progress>
+                        </div>
+                        <form id="paidForm" action="/checkout/confirm" method="POST">
+                            <input type="hidden" name="total" value="<%= total %>">
+                            <!-- ✅ THÊM orderId -->
+                            <input type="hidden" name="orderId" value="<%= order.id %>">
+
+                            <button id="paidBtn" class="btn-primary" type="submit" disabled>
+                                <span id="btnText">✅ Tôi đã thanh toán</span>
+                                <span id="btnSpinner" class="spinner hidden"></span>
+                            </button>
+                        </form>
+                        <button id="refreshQr" class="btn-outline">Làm mới mã QR</button>
+                        <a href="/cart" class="btn-link">Quay lại giỏ hàng</a>
+                    </div>
+                </aside>
+            </section>
+        </main>
+        <%- include('partials/footer') %>
+            <script>
+                (function () {
+                    const countEl = document.getElementById('count');
+                    const progress = document.getElementById('progress');
+                    const paidBtn = document.getElementById('paidBtn');
+                    const btnSpinner = document.getElementById('btnSpinner');
+                    const btnText = document.getElementById('btnText');
+                    const refresh = document.getElementById('refreshQr');
+
+                    // Nhận thời gian còn lại từ server
+                    let remaining = parseInt('<%= remainingTime %>') || 0;
+                    const isExpired = '<%= isExpired %>' === 'true';
+                    const totalSeconds = 900; // 15 phút
+
+                    function formatTime(s) {
+                        const m = Math.floor(s / 60).toString().padStart(2, '0');
+                        const ss = (s % 60).toString().padStart(2, '0');
+                        return m + ':' + ss;
+                    }
+
+                    // Nếu đã hết hạn
+                    if (isExpired || remaining <= 0) {
+                        countEl.textContent = "Hết hạn";
+                        paidBtn.disabled = true;
+                        paidBtn.style.backgroundColor = "#ccc";
+                        btnText.textContent = "⏰ Đã hết thời gian thanh toán";
+                        progress.value = 0;
+
+                        const backBtn = document.createElement('a');
+                        backBtn.href = '/orders';
+                        backBtn.className = 'btn-outline';
+                        backBtn.textContent = '← Quay lại đơn hàng';
+                        backBtn.style.display = 'block';
+                        backBtn.style.marginTop = '10px';
+                        paidBtn.parentElement.appendChild(backBtn);
+
+                        return;
+                    }
+
+                    // Bắt đầu đếm ngược
+                    const interval = setInterval(function () {
+                        remaining--;
+                        if (remaining < 0) {
+                            clearInterval(interval);
+                            countEl.textContent = "Hết hạn";
+                            paidBtn.disabled = true;
+                            paidBtn.style.backgroundColor = "#ccc";
+                            btnText.textContent = "⏰ Đã hết thời gian thanh toán";
+                            progress.value = 0;
+
+                            setTimeout(function () {
+                                window.location.href = '/orders';
+                            }, 2000);
+                            return;
+                        }
+                        countEl.textContent = formatTime(remaining);
+                        progress.value = Math.round((remaining / totalSeconds) * 100);
+                    }, 1000);
+
+                    // Enable button sau 3 giây
+                    setTimeout(function () {
+                        paidBtn.disabled = false;
+                    }, 3000);
+
+                    document.getElementById('paidForm').addEventListener('submit', function (e) {
+                        paidBtn.disabled = true;
+                        btnSpinner.classList.remove('hidden');
+                        btnText.textContent = 'Đang xử lý...';
+                    });
+
+                    refresh.addEventListener('click', function () {
+                        location.reload();
+                    });
+                })();
+            </script>
+</body>
+
+</html>

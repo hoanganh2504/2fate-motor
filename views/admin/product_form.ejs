@@ -1,0 +1,35 @@
+<%- include('../partials/sidebar_admin', { title: title }) %>
+
+    <div class="container mt-4">
+        <h2>
+            <%= title %>
+        </h2>
+
+        <form method="POST" action="<%= product ? '/admin/products/edit/' + product.id : '/admin/products/add' %>">
+            <div class="mb-3">
+                <label class="form-label">Tên sản phẩm</label>
+                <input type="text" name="name" class="form-control" value="<%= product ? product.name : '' %>" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Giá</label>
+                <input type="number" name="price" class="form-control" value="<%= product ? product.price : '' %>"
+                    required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mô tả</label>
+                <textarea name="description" class="form-control"><%= product ? product.description : '' %></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Đường dẫn ảnh (URL)</label>
+                <input type="text" name="image" class="form-control" value="<%= product ? product.image : '' %>">
+            </div>
+
+            <button type="submit" class="btn btn-success">Lưu</button>
+            <a href="/admin/products" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+
+    <%- include('../partials/footer_admin') %>

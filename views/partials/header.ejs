@@ -1,0 +1,223 @@
+<link rel="stylesheet" href="/css/dark-mode.css">
+
+<header class="main-header">
+    <div class="logo-nav">
+        <!-- Logo -->
+        <div class="logo-block" onclick="window.location.href='/index'" style="cursor: pointer;">
+            <img src="/images/logo.png" alt="2FATE Logo" class="logo-img" />
+        </div>
+
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <a href="/index" class="<%= activePage === 'home' ? 'active' : '' %>" data-lang-key="home">Trang chủ</a>
+            <a href="/contact" class="<%= activePage === 'contact' ? 'active' : '' %>" data-lang-key="contact">Giới thiệu</a>
+            <a href="/search" class="<%= activePage === 'search' ? 'active' : '' %>" data-lang-key="search">Tìm kiếm</a>
+            <a href="/discount" class="<%= activePage === 'discount' ? 'active' : '' %>" data-lang-key="discount">Khuyến
+                mãi</a>
+            <a href="/event" class="<%= activePage === 'event' ? 'active' : '' %>" data-lang-key="event">Sự kiện</a>
+            <a href="/blog" class="<%= activePage === 'blog' ? 'active' : '' %>" data-lang-key="blog">Bài viết</a>
+        </nav>
+    </div>
+
+    <!-- Icons -->
+    <div class="header-icons">
+        <!-- Cart -->
+        <span class="icon-cart" style="position: relative; cursor: pointer;" onclick="window.location.href='/cart'">
+            <img src="/images/Shopping Cart.png" alt="cart" class="cart-img" />
+            <span id="cartCount">
+                <%= typeof cartCount !=='undefined' ? cartCount : 0 %>
+            </span>
+        </span>
+
+        <!-- User Account -->
+        <% if (user) { %>
+            <span class="icon-user" id="account-section" style="cursor: pointer; position: relative;">
+                <img src="/images/Test Account.png" alt="account" class="account-img" />
+                <div id="user-name" class="username-label">
+                    <%= user.username %>
+                </div>
+            </span>
+            <% } else { %>
+                <span class="icon-user" id="account-section" style="cursor: pointer;">
+                    <img src="/images/Test Account.png" alt="account" class="account-img" id="account-icon" />
+                </span>
+                <% } %>
+    </div>
+
+    <!-- Dropdown -->
+    <% if (user) { %>
+        <div id="user-dropdown" class="user-dropdown">
+            <p><strong data-lang-key="hello">Xin chào,</strong>
+                <%= user.username %>
+            </p>
+            <hr>
+            <a href="/profile" class="dropdown-item" data-lang-key="profile">👤 Hồ sơ cá nhân</a>
+            <a href="/cart" class="dropdown-item" data-lang-key="myCart">🛒 Giỏ hàng của tôi</a>
+            <a href="/orders" class="dropdown-item" data-lang-key="orders">📦 Đơn hàng</a>
+            <a href="/settings" class="dropdown-item" data-lang-key="settings">⚙️ Cài đặt</a>
+            <hr>
+            <a href="/logout" class="logout-link" data-lang-key="logout">🚪 Đăng xuất</a>
+        </div>
+        <% } %>
+
+            <style>
+                .main-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px 30px;
+                    background-color: var(--bg-color, #fff);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                    position: sticky;
+                    top: 0;
+                    z-index: 999;
+                }
+
+                .logo-img {
+                    width: 120px;
+                }
+
+                .main-nav a {
+                    margin: 0 10px;
+                    text-decoration: none;
+                    color: var(--text-color, #333);
+                    font-weight: 500;
+                }
+
+                .main-nav a.active {
+                    color: #0080ff;
+                    border-bottom: 2px solid #0080ff;
+                }
+
+                .header-icons {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                }
+
+                #cartCount {
+                    position: absolute;
+                    top: -6px;
+                    right: -8px;
+                    background-color: #ff3b3b;
+                    color: #fff;
+                    font-size: 12px;
+                    border-radius: 50%;
+                    padding: 2px 6px;
+                }
+
+                .user-dropdown {
+                    display: none;
+                    position: absolute;
+                    top: 60px;
+                    right: 10px;
+                    background-color: var(--bg-color, #fff);
+                    border-radius: 10px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    width: 220px;
+                    z-index: 1000;
+                    padding: 10px 0;
+                    animation: fadeIn 0.2s ease-in-out;
+                }
+
+                .user-dropdown hr {
+                    margin: 8px 0;
+                    border: none;
+                    border-top: 1px solid #eee;
+                }
+
+                .dropdown-item,
+                .logout-link {
+                    display: block;
+                    padding: 10px 16px;
+                    text-decoration: none;
+                    color: var(--text-color, #333);
+                    font-size: 15px;
+                }
+
+                .dropdown-item:hover,
+                .logout-link:hover {
+                    background-color: var(--hover-bg, #f4f4f4);
+                }
+
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-5px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+</header>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const accountSection = document.getElementById("account-section");
+        const userDropdown = document.getElementById("user-dropdown");
+        const accountIcon = document.getElementById("account-icon");
+
+        if (accountSection && userDropdown) {
+            accountSection.addEventListener("click", (e) => {
+                e.stopPropagation();
+                userDropdown.style.display = userDropdown.style.display === "block" ? "none" : "block";
+            });
+            document.addEventListener("click", (e) => {
+                if (!accountSection.contains(e.target)) {
+                    userDropdown.style.display = "none";
+                }
+            });
+        }
+
+        if (accountIcon) {
+            accountIcon.addEventListener("click", () => {
+                window.location.href = "/login";
+            });
+        }
+
+        // Dark mode
+        const isDark = localStorage.getItem("darkMode") === "true";
+        document.body.classList.toggle("dark-mode", isDark);
+
+        // Language
+        const currentLang = localStorage.getItem("lang") || "vi";
+        const texts = {
+            vi: {
+                home: "Trang chủ",
+                contact: "Giới thiệu",
+                search: "Tìm kiếm",
+                discount: "Khuyến mãi",
+                event: "Sự kiện",
+                blog: "Bài viết",
+                hello: "Xin chào,",
+                profile: "👤 Hồ sơ cá nhân",
+                myCart: "🛒 Giỏ hàng của tôi",
+                orders: "📦 Đơn hàng",
+                settings: "⚙️ Cài đặt",
+                logout: "🚪 Đăng xuất"
+            },
+            en: {
+                home: "Home",
+                contact: "About Us",
+                search: "Search",
+                discount: "Discount",
+                event: "Event",
+                blog: "Blog",
+                hello: "Hello,",
+                profile: "👤 Profile",
+                myCart: "🛒 My Cart",
+                orders: "📦 Orders",
+                settings: "⚙️ Settings",
+                logout: "🚪 Logout"
+            }
+        };
+
+        document.querySelectorAll("[data-lang-key]").forEach(el => {
+            const key = el.getAttribute("data-lang-key");
+            if (texts[currentLang][key]) el.textContent = texts[currentLang][key];
+        });
+    });
+</script>

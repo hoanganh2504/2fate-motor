@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Đặt hàng thành công — 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <main class="success-page">
+            <div class="success-card">
+                <div class="icon">🎉</div>
+                <h1>Thanh toán / Đặt hàng thành công</h1>
+                <p class="muted">Cảm ơn bạn đã mua hàng tại <strong>2FATE Motor</strong>. Đơn hàng đang được xử lý.</p>
+
+                <div class="order-actions">
+                    <a class="btn-primary" href="/orders">Xem lịch sử đơn hàng</a>
+                    <a class="btn-outline" href="/index">Tiếp tục mua sắm</a>
+                </div>
+
+                <div class="tips">
+                    <p><strong>Mẹo:</strong> Bạn có thể kiểm tra chi tiết đơn trong mục <em>Hồ sơ → Đơn hàng</em>.</p>
+                </div>
+            </div>
+        </main>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

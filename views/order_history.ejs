@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử mua hàng - 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            background: #f6f6f6;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .history-container {
+            max-width: 1000px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 40px 50px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 30px;
+        }
+
+        h2::before {
+            content: "🧾";
+            margin-right: 10px;
+        }
+
+        .order-card {
+            border: 1px solid #e6e6e6;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            background: #fff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .order-info p {
+            margin: 4px 0;
+            font-size: 15px;
+        }
+
+        .order-total {
+            font-weight: 600;
+            color: #0078d7;
+        }
+
+        .order-status {
+            font-weight: 600;
+            text-transform: capitalize;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-shipped {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .view-detail {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #0078d7;
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+
+        .view-detail:hover {
+            background: #005fa3;
+        }
+
+        .no-order {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <div class="history-container">
+            <h2>Lịch sử mua hàng</h2>
+
+            <% if (!history || history.length===0) { %>
+                <p class="no-order">Bạn chưa có đơn hàng nào.</p>
+                <% } else { %>
+                    <% history.forEach(order=> { %>
+                        <div class="order-card">
+                            <div class="order-header">
+                                <span>🧾 Mã đơn: <strong>#<%= order.order_id %></strong></span>
+                                <span class="order-status 
+                            <%= order.status === 'Đang xử lý' ? 'status-processing' 
+                            : order.status === 'Đã giao' ? 'status-shipped' 
+                            : 'status-cancelled' %>">
+                                    <%= order.status %>
+                                </span>
+                            </div>
+
+                            <div class="order-info">
+                                <p>📅 Ngày đặt: <%= new Date(order.created_at).toLocaleDateString('vi-VN') %>
+                                </p>
+                                <p>💰 Tổng tiền: <span class="order-total">
+                                        <%= Number(order.total_price).toLocaleString('vi-VN') %> ₫
+                                    </span></p>
+                                <p>📦 Sản phẩm: <%= order.items || 'Không có thông tin sản phẩm' %>
+                                </p>
+                            </div>
+
+                            <a href="/order_total?id=<%= order.order_id %>" class="view-detail">Xem chi tiết</a>
+                        </div>
+                        <% }) %>
+                            <% } %>
+        </div>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng - 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/cart.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        .warning-item {
+            padding: 10px;
+            background: white;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .stock-info {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .out-of-stock-row {
+            background: #ffebee;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("partials/header") %>
+
+        <div class="cart-container">
+            <h1>🛒 Giỏ hàng của bạn</h1>
+
+            <% if (warnings && warnings.length> 0) { %>
+                <div class="warning-box">
+                    <h3>⚠️ Cảnh báo tồn kho</h3>
+                    <p>Một số sản phẩm trong giỏ hàng của bạn không còn đủ số lượng:</p>
+                    <% warnings.forEach(w=> { %>
+                        <div class="warning-item">
+                            <strong>
+                                <%= w.productName %>
+                            </strong> tại <strong>
+                                <%= w.warehouse %>
+                            </strong><br>
+                            Bạn đặt: <span style="color:#e74c3c">
+                                <%= w.requested %>
+                            </span> |
+                            Còn lại: <span style="color:#27ae60">
+                                <%= w.available %>
+                            </span>
+                        </div>
+                        <% }) %>
+                            <p style="margin-top:15px;color:#856404">
+                                <strong>Vui lòng cập nhật số lượng hoặc xóa sản phẩm không đủ hàng!</strong>
+                            </p>
+                </div>
+                <% } %>
+
+                    <% if (cartItems.length===0) { %>
+                        <div class="empty-cart">
+                            <p>Giỏ hàng trống.</p>
+                            <a href="/search" class="btn">Tiếp tục mua sắm</a>
+                        </div>
+                        <% } else { %>
+                            <table class="cart-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hình ảnh</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Chi nhánh</th>
+                                        <th>Màu</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá</th>
+                                        <th>Tổng</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% cartItems.forEach(item=> {
+                                        const stockQty = item.stock_quantity || 0;
+                                        const isOutOfStock = stockQty < item.cart_quantity; %>
+                                            <tr class="<%= isOutOfStock ? 'out-of-stock-row' : '' %>">
+                                                <td><img src="<%= item.image %>" alt="" class="product-img"></td>
+                                                <td>
+                                                    <strong>
+                                                        <%= item.name %>
+                                                    </strong>
+                                                    <% if (isOutOfStock) { %>
+                                                        <div style="color:#e74c3c;font-size:0.9rem;margin-top:5px">
+                                                            ⚠️ Không đủ hàng!
+                                                        </div>
+                                                        <% } %>
+                                                </td>
+                                                <td>
+                                                    <%= item.warehouse_name %>
+                                                        <div class="stock-info">
+                                                            Tồn kho: <strong>
+                                                                <%= stockQty %>
+                                                            </strong>
+                                                        </div>
+                                                </td>
+                                                <td>
+                                                    <%= item.color %>
+                                                </td>
+                                                <td>
+                                                    <form action="/cart/update/<%= item.id %>" method="POST"
+                                                        class="form-inline">
+                                                        <input type="number" name="quantity"
+                                                            value="<%= item.cart_quantity %>" min="0"
+                                                            max="<%= stockQty %>" class="qty-input">
+                                                        <button type="submit" class="btn-update">Cập nhật</button>
+                                                    </form>
+                                                    <% if (isOutOfStock) { %>
+                                                        <div style="color:#e74c3c;font-size:0.85rem;margin-top:5px">
+                                                            Max: <%= stockQty %>
+                                                        </div>
+                                                        <% } %>
+                                                </td>
+                                                <td>
+                                                    <%= item.price.toLocaleString() %> VND
+                                                </td>
+                                                <td>
+                                                    <%= (item.price * item.cart_quantity).toLocaleString() %> VND
+                                                </td>
+                                                <td>
+                                                    <form action="/cart/delete/<%= item.id %>" method="POST"
+                                                        onsubmit="return confirm('Xóa sản phẩm này?');">
+                                                        <button type="submit" class="btn-delete">🗑️ Xóa</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                </tbody>
+                            </table>
+
+                            <div class="cart-footer">
+                                <h3>
+                                    Tổng cộng:
+                                    <%= cartItems.reduce((sum, i)=> sum + i.price * i.cart_quantity,
+                                        0).toLocaleString() %> VND
+                                </h3>
+
+                                <% if (warnings && warnings.length> 0) { %>
+                                    <p style="color:#e74c3c;margin:10px 0">
+                                        ⚠️ Vui lòng xử lý các cảnh báo trước khi thanh toán!
+                                    </p>
+                                    <button class="btn-checkout" disabled style="background:#ccc;cursor:not-allowed">
+                                        Không thể thanh toán
+                                    </button>
+                                    <% } else { %>
+                                        <form action="/checkout/address" method="GET" style="display:inline">
+                                            <button type="submit" class="btn-checkout">Thanh toán ➜</button>
+                                        </form>
+                                        <% } %>
+                            </div>
+                            <% } %>
+        </div>
+
+        <%- include("partials/footer") %>
+</body>
+
+</html>

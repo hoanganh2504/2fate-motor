@@ -1,0 +1,89 @@
+.product-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.stock-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.badge-low {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-normal {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-high {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.stat-box {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 0;
+    margin-bottom: 20px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.stat-box.blue .stat-value {
+    color: #0d6efd;
+}
+
+.stat-box.green .stat-value {
+    color: #198754;
+}
+
+.stat-box.orange .stat-value {
+    color: #fd7e14;
+}
+
+.stat-box.red .stat-value {
+    color: #dc3545;
+}
+
+.report-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 0;
+    margin-bottom: 20px;
+}
+
+.table {
+    background: #fff;
+}
+
+.table thead {
+    background: #f8f9fa;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}

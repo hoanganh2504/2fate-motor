@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Danh mục - 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+    <%- include('../partials/header_admin') %>
+        <div class="container-fluid">
+            <div class="row">
+                <%- include('../partials/sidebar_admin') %>
+
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="text-primary"><i class="bi bi-tags"></i> Quản lý Danh mục</h1>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+                                <i class="bi bi-plus-circle"></i> Thêm danh mục
+                            </button>
+                        </div>
+
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body">
+                                <% const grouped=categories.reduce((acc, cat)=> {
+                                    if (!acc[cat.type_category]) acc[cat.type_category] = [];
+                                    acc[cat.type_category].push(cat);
+                                    return acc;
+                                    }, {}); %>
+
+                                    <% if (categories.length> 0) { %>
+                                        <% Object.keys(grouped).forEach(type=> { %>
+                                            <h5 class="mt-4 mb-3 text-uppercase fw-bold text-secondary">
+                                                <i class="bi bi-folder2-open"></i> Loại:
+                                                <% if (type==='type' ) { %>Loại xe
+                                                    <% } else if (type==='cc' ) { %>Phân khối
+                                                        <% } else if (type==='color' ) { %>Màu sắc
+                                                            <% } else if (type==='brand' ) { %>Thương hiệu
+                                                                <% } else { %>
+                                                                    <%= type %>
+                                                                        <% } %>
+                                            </h5>
+
+                                            <table class="table table-hover align-middle mb-4">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Tên danh mục</th>
+                                                        <th>Loại</th>
+                                                        <th>Mô tả</th>
+                                                        <th>Ngày tạo</th>
+                                                        <th>Hành động</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% grouped[type].forEach(c=> { %>
+                                                        <tr>
+                                                            <td>
+                                                                <%= c.id %>
+                                                            </td>
+                                                            <td><strong>
+                                                                    <%= c.name %>
+                                                                </strong></td>
+                                                            <td>
+                                                                <% if (c.type_category==='type' ) { %>
+                                                                    <span class="badge bg-primary">Loại xe</span>
+                                                                    <% } else if (c.type_category==='cc' ) { %>
+                                                                        <span class="badge bg-info">Phân khối</span>
+                                                                        <% } else if (c.type_category==='color' ) { %>
+                                                                            <span class="badge bg-warning">Màu
+                                                                                sắc</span>
+                                                                            <% } else if (c.type_category==='brand' ) {
+                                                                                %>
+                                                                                <span class="badge bg-success">Thương
+                                                                                    hiệu</span>
+                                                                                <% } else { %>
+                                                                                    <span class="badge bg-secondary">
+                                                                                        <%= c.type_category %>
+                                                                                    </span>
+                                                                                    <% } %>
+                                                            </td>
+                                                            <td>
+                                                                <%= c.description || '—' %>
+                                                            </td>
+                                                            <td>
+                                                                <%= new Date(c.created_at).toLocaleDateString('vi-VN')
+                                                                    %>
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning editBtn"
+                                                                    data-id="<%= c.id %>" data-name="<%= c.name %>"
+                                                                    data-type="<%= c.type_category %>"
+                                                                    data-description="<%= c.description || '' %>">
+                                                                    <i class="bi bi-pencil"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-danger deleteBtn"
+                                                                    data-id="<%= c.id %>">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <p class="text-center text-muted">Chưa có danh mục nào.</p>
+                                                    <% } %>
+                            </div>
+                        </div>
+                    </main>
+            </div>
+        </div>
+
+        <!-- Modal thêm danh mục -->
+        <div class="modal fade" id="addModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/admin/categories/add" method="POST">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title"><i class="bi bi-plus-circle"></i> Thêm danh mục mới</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Loại danh mục <span class="text-danger">*</span></label>
+                                <select name="type_category" class="form-select" required>
+                                    <option value="">-- Chọn loại --</option>
+                                    <option value="type">Loại xe</option>
+                                    <option value="cc">Phân khối</option>
+                                    <option value="color">Màu sắc</option>
+                                    <option value="brand">Thương hiệu</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control"
+                                    placeholder="Ví dụ: Tay ga, 150cc, Đen..." required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mô tả</label>
+                                <textarea name="description" class="form-control" rows="3"
+                                    placeholder="Mô tả chi tiết (không bắt buộc)"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Lưu
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal sửa danh mục -->
+        <div class="modal fade" id="editModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/admin/categories/edit" method="POST">
+                        <input type="hidden" name="id" id="editId">
+                        <div class="modal-header bg-warning">
+                            <h5 class="modal-title"><i class="bi bi-pencil"></i> Chỉnh sửa danh mục</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Loại danh mục <span class="text-danger">*</span></label>
+                                <select name="type_category" id="editType" class="form-select" required>
+                                    <option value="">-- Chọn loại --</option>
+                                    <option value="type">Loại xe</option>
+                                    <option value="cc">Phân khối</option>
+                                    <option value="color">Màu sắc</option>
+                                    <option value="brand">Thương hiệu</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                                <input type="text" name="name" id="editName" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mô tả</label>
+                                <textarea name="description" id="editDescription" class="form-control"
+                                    rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Cập nhật
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Gán dữ liệu cho modal sửa
+            document.querySelectorAll('.editBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('editId').value = btn.dataset.id;
+                    document.getElementById('editName').value = btn.dataset.name;
+                    document.getElementById('editType').value = btn.dataset.type;
+                    document.getElementById('editDescription').value = btn.dataset.description || '';
+                    new bootstrap.Modal(document.getElementById('editModal')).show();
+                });
+            });
+
+            // Xác nhận xóa
+            document.querySelectorAll('.deleteBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (confirm('⚠️ Bạn có chắc muốn xóa danh mục này?\n\nLưu ý: Các sản phẩm liên quan có thể bị ảnh hưởng!')) {
+                        window.location.href = `/admin/categories/delete/${btn.dataset.id}`;
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

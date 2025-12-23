@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FATE Motor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/discount.css">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+<!-- Discount Banner -->
+<section class="discount-banner">
+    <h1>🔥 Ưu đãi đặc biệt cho tháng 9 🔥</h1>
+    <p>Giảm giá lên đến <strong>30%</strong> cho các dòng xe hot nhất!</p>
+    <button id="getDiscountBtn">Nhận ưu đãi ngay</button>
+</section>
+
+<!-- Discount Items -->
+<section class="discount-items">
+    <h2>Sản phẩm khuyến mãi</h2>
+    <div class="discount-grid">
+        <div class="discount-card">
+            <img src="images/discount1.jpg" alt="Xe 1">
+            <h3>Honda Air Blade 160</h3>
+            <p class="old-price">50.000.000đ</p>
+            <p class="new-price">45.000.000đ</p>
+        </div>
+        <div class="discount-card">
+            <img src="images/discount2.jpg" alt="Xe 2">
+            <h3>Yamaha Exciter 155</h3>
+            <p class="old-price">47.000.000đ</p>
+            <p class="new-price">42.000.000đ</p>
+        </div>
+        <div class="discount-card">
+            <img src="images/discount3.jpg" alt="Xe 3">
+            <h3>Kawasaki Z400</h3>
+            <p class="old-price">149.000.000đ</p>
+            <p class="new-price">135.000.000đ</p>
+        </div>
+    </div>
+</section>
+
+
+</body>
+
+<%- include('partials/footer') %>
+
+    <script src="js/discount.js"></script>
+
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FATE Motor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/event.css">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+<!-- Event Banner -->
+<section class="event-banner">
+    <h1>🎉 Sự kiện nổi bật của 2FATE 🎉</h1>
+    <p>Tham gia ngay các sự kiện hấp dẫn dành cho biker!</p>
+</section>
+
+<!-- Event List -->
+<section class="event-list">
+    <h2>Sự kiện sắp diễn ra</h2>
+    <div class="event-grid">
+        <!-- Event 1 -->
+        <div class="event-card">
+            <img src="images/event1.jpg" alt="Event 1">
+            <div class="event-info">
+                <h3>Motor Expo 2025</h3>
+                <p><strong>Thời gian:</strong> 15/10/2025</p>
+                <p><strong>Địa điểm:</strong> SECC, TP.HCM</p>
+                <p>Triển lãm mô tô lớn nhất năm, với nhiều mẫu xe mới ra mắt.</p>
+                <button class="btn-register" data-event="Motor Expo 2025">Đăng ký ngay</button>
+            </div>
+        </div>
+        <!-- Event 2 -->
+        <div class="event-card">
+            <img src="images/event2.jpg" alt="Event 2">
+            <div class="event-info">
+                <h3>2FATE Biker Tour</h3>
+                <p><strong>Thời gian:</strong> 05/11/2025</p>
+                <p><strong>Địa điểm:</strong> Đà Lạt</p>
+                <p>Hành trình phượt dành cho hội viên 2FATE, khám phá cung đường tuyệt đẹp.</p>
+                <button class="btn-register" data-event="2FATE Biker Tour">Đăng ký ngay</button>
+            </div>
+        </div>
+        <!-- Event 3 -->
+        <div class="event-card">
+            <img src="images/event3.jpg" alt="Event 3">
+            <div class="event-info">
+                <h3>Workshop Bảo Dưỡng Xe</h3>
+                <p><strong>Thời gian:</strong> 20/12/2025</p>
+                <p><strong>Địa điểm:</strong> Showroom 2FATE, Hà Nội</p>
+                <p>Chia sẻ kiến thức bảo dưỡng, chăm sóc xe cùng chuyên gia.</p>
+                <button class="btn-register" data-event="Workshop Bảo Dưỡng Xe">Đăng ký ngay</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+
+<%- include('partials/footer') %>
+
+<script src="js/event.js"></script>
+
+</html>

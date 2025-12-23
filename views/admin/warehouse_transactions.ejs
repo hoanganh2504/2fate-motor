@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử giao dịch kho - 2FATE Motor</title>
+
+    <!-- Đồng bộ với admin dashboard -->
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/css_admin/warehouse_transactions.css">
+</head>
+
+<body>
+
+    <%- include('../partials/header_admin') %>
+
+        <div class="container-fluid">
+            <div class="row">
+
+                <%- include('../partials/sidebar_admin') %>
+
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+
+                        <h1 class="mb-4 text-primary">
+                            <i class="bi bi-clock-history"></i> Lịch sử giao dịch kho
+                        </h1>
+
+                        <!-- Bộ lọc -->
+                        <div class="filter-card">
+                            <form action="/admin/warehouse-transactions" method="GET">
+                                <div class="row g-3">
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Kho</label>
+                                        <select class="form-select" name="warehouse_id">
+                                            <option value="">Tất cả kho</option>
+                                            <% warehouses.forEach(w=> { %>
+                                                <option value="<%= w.id %>" <%=filters.warehouse_id==w.id ? 'selected'
+                                                    : '' %>>
+                                                    <%= w.name %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Sản phẩm</label>
+                                        <select class="form-select" name="product_id">
+                                            <option value="">Tất cả sản phẩm</option>
+                                            <% products.forEach(p=> { %>
+                                                <option value="<%= p.id %>" <%=filters.product_id==p.id ? 'selected'
+                                                    : '' %>>
+                                                    <%= p.name %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label">Từ ngày</label>
+                                        <input type="date" class="form-control" name="from_date"
+                                            value="<%= filters.from_date || '' %>">
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label">Đến ngày</label>
+                                        <input type="date" class="form-control" name="to_date"
+                                            value="<%= filters.to_date || '' %>">
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                                            <i class="bi bi-search"></i> Lọc
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Thống kê -->
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="stat-card">
+                                    <h4 class="text-success">
+                                        <%= transactions.filter(t=>t.transaction_type==='import').length %>
+                                    </h4>
+                                    <p class="mb-0 text-muted">Lượt nhập</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="stat-card">
+                                    <h4 class="text-danger">
+                                        <%= transactions.filter(t=>t.transaction_type==='export').length %>
+                                    </h4>
+                                    <p class="mb-0 text-muted">Lượt xuất</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="stat-card">
+                                    <h4 class="text-warning">
+                                        <%= transactions.filter(t=>t.transaction_type==='adjustment').length %>
+                                    </h4>
+                                    <p class="mb-0 text-muted">Điều chỉnh</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Danh sách giao dịch -->
+                        <div class="mb-3">
+                            <h5>
+                                <i class="bi bi-list text-primary"></i> Danh sách giao dịch
+                                <span class="badge bg-secondary">
+                                    <%= transactions.length %>
+                                </span>
+                            </h5>
+                        </div>
+
+                        <% if (transactions.length===0) { %>
+                            <div class="alert alert-info shadow-sm border-0">
+                                <i class="bi bi-info-circle"></i> Không có giao dịch nào trong khoảng thời gian này.
+                            </div>
+                            <% } else { %>
+
+                                <% transactions.forEach(t=> { %>
+                                    <div class="transaction-card <%= t.transaction_type %>">
+
+                                        <div class="row align-items-center">
+
+                                            <div class="col-md-2">
+                                                <span class="type-badge type-<%= t.transaction_type %>">
+                                                    <% if (t.transaction_type==='import' ) { %>
+                                                        <i class="bi bi-arrow-down-circle"></i> Nhập
+                                                        <% } else if (t.transaction_type==='export' ) { %>
+                                                            <i class="bi bi-arrow-up-circle"></i> Xuất
+                                                            <% } else { %>
+                                                                <i class="bi bi-gear"></i> Điều chỉnh
+                                                                <% } %>
+                                                </span>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <small class="text-muted">Sản phẩm</small>
+                                                <p class="mb-0 fw-bold">
+                                                    <%= t.product_name %>
+                                                </p>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <small class="text-muted">Kho</small>
+                                                <p class="mb-0">
+                                                    <%= t.warehouse_name %>
+                                                </p>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <small class="text-muted">Số lượng</small>
+                                                <p
+                                                    class="mb-0 fw-bold <%= t.transaction_type==='import' ? 'text-success' : 'text-danger' %>">
+                                                    <%= t.transaction_type==='import' ? '+' : '-' %>
+                                                        <%= Math.abs(t.quantity) %>
+                                                </p>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <small class="text-muted">Tồn sau</small>
+                                                <p class="mb-0 fw-bold">
+                                                    <%= t.balance_after %>
+                                                </p>
+                                            </div>
+
+                                            <div class="col-md-1 text-muted small">
+                                                <%= new Date(t.created_at).toLocaleDateString('vi-VN') %>
+                                            </div>
+
+                                        </div>
+
+                                        <% if (t.notes) { %>
+                                            <div class="mt-2 text-muted small">
+                                                <i class="bi bi-sticky"></i>
+                                                <%= t.notes %>
+                                            </div>
+                                            <% } %>
+
+                                    </div>
+                                    <% }) %>
+
+                                        <% } %>
+
+                    </main>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

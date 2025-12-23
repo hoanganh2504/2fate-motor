@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị - Bike Store</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <%- include('partials/header_admin') %>
+
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- Sidebar -->
+                <%- include('partials/sidebar_admin') %>
+
+                    <!-- Main Content -->
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+                        <h1 class="mb-4 text-primary"><i class="bi bi-speedometer2"></i> Dashboard</h1>
+
+                        <!-- Stats Section -->
+                        <section class="row text-center mb-5">
+                            <div class="col-md-3 mb-3">
+                                <div class="card p-3 shadow-sm border-0">
+                                    <h5 class="text-muted">Tổng sản phẩm</h5>
+                                    <h2 class="text-dark">
+                                        <%= productCount || 0 %>
+                                    </h2>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card p-3 shadow-sm border-0">
+                                    <h5 class="text-muted">Đơn hàng</h5>
+                                    <h2 class="text-dark">
+                                        <%= orderCount || 0 %>
+                                    </h2>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card p-3 shadow-sm border-0">
+                                    <h5 class="text-muted">Người dùng</h5>
+                                    <h2 class="text-dark">
+                                        <%= userCount || 0 %>
+                                    </h2>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card p-3 shadow-sm border-0">
+                                    <h5 class="text-muted">Doanh thu (VNĐ)</h5>
+                                    <h2 class="text-dark">
+                                        <%= totalRevenue ? totalRevenue.toLocaleString() : 0 %>
+                                    </h2>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Quick Access Section -->
+                        <section>
+                            <h4 class="mb-3">Quản lý nhanh</h4>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <a href="/admin/products" class="text-decoration-none">
+                                        <div class="card text-center shadow-sm p-3 h-100 hover-shadow">
+                                            <i class="bi bi-box-seam display-5 text-primary"></i>
+                                            <h6 class="mt-3 text-dark">Sản phẩm</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/admin/orders" class="text-decoration-none">
+                                        <div class="card text-center shadow-sm p-3 h-100 hover-shadow">
+                                            <i class="bi bi-receipt-cutoff display-5 text-success"></i>
+                                            <h6 class="mt-3 text-dark">Đơn hàng</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/admin/users" class="text-decoration-none">
+                                        <div class="card text-center shadow-sm p-3 h-100 hover-shadow">
+                                            <i class="bi bi-people-fill display-5 text-warning"></i>
+                                            <h6 class="mt-3 text-dark">Người dùng</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/admin/categories" class="text-decoration-none">
+                                        <div class="card text-center shadow-sm p-3 h-100 hover-shadow">
+                                            <i class="bi bi-tags-fill display-5 text-danger"></i>
+                                            <h6 class="mt-3 text-dark">Danh mục</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <%- include('partials/footer_admin') %>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        <%= product.name %> - 2FATE Motor
+    </title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .image-section {
+            flex: 1 1 50%;
+            padding: 20px;
+        }
+
+        .image-section img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-section {
+            flex: 1 1 50%;
+            padding: 20px;
+        }
+
+        .info-section h1 {
+            margin-top: 0;
+            color: #222;
+            font-size: 2em;
+        }
+
+        .info-section p {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .info-section h3 {
+            margin-top: 30px;
+            color: #222;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 8px;
+        }
+
+        .description {
+            margin-top: 20px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background-color: #222;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #555;
+        }
+
+        .discount {
+            color: red;
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            position: relative;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .modal-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <div class="container">
+            <div class="image-section">
+                <img src="<%= product.image %>" alt="<%= product.name %>" />
+            </div>
+
+            <div class="info-section">
+                <h1>
+                    <%= product.name %>
+                </h1>
+                <p><strong>Mã sản phẩm:</strong>
+                    <%= product.id %>
+                </p>
+                <p><strong>Giá:</strong>
+                    <span class="discount">
+                        <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                            }).format(product.price) %>
+                    </span>
+                </p>
+                <p><strong>Loại xe:</strong>
+                    <%= product.type %>
+                </p>
+                <p><strong>Dung tích:</strong>
+                    <%= product.cc %> cc
+                </p>
+                <p><strong>Màu sắc:</strong>
+                    <%= product.color %>
+                </p>
+
+                <h3>Mô tả sản phẩm</h3>
+                <div class="description">
+                    <%= product.description %>
+                </div>
+
+                <a href="#" class="btn">Liên hệ mua hàng</a>
+                <button id="addToCartBtn" data-id="<%= product.id %>" class="btn">Thêm vào giỏ hàng</button>
+            </div>
+        </div>
+
+        <!-- Modal chọn cấu hình -->
+        <div id="cartConfigModal" class="modal">
+            <div class="modal-content">
+                <h3>Chọn cấu hình để thêm vào giỏ hàng</h3>
+                <form id="cartForm">
+                    <input type="hidden" id="productId" value="<%= product.id %>">
+
+                    <label for="colorSelect">Màu sắc:</label>
+                    <select id="colorSelect">
+                        <option value="Đen">Đen</option>
+                        <option value="Đỏ">Đỏ</option>
+                        <option value="Xanh">Xanh</option>
+                    </select>
+
+                    <label for="quantityInput">Số lượng:</label>
+                    <input type="number" id="quantityInput" min="1" value="1" />
+
+                    <div class="modal-actions">
+                        <button type="button" id="cancelBtn" class="btn" style="background: gray;">Hủy</button>
+                        <button type="submit" id="confirmAddBtn" class="btn">Thêm vào giỏ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+
+            <script>
+                // Mở / Đóng modal
+                const modal = document.getElementById('cartConfigModal');
+                const addBtn = document.getElementById('addToCartBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+
+                addBtn.addEventListener('click', () => {
+                    modal.style.display = 'flex';
+                });
+
+                cancelBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.style.display = 'none';
+                });
+
+                // Gửi dữ liệu thêm vào giỏ hàng
+                document.getElementById("cartForm").addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    const productId = document.getElementById("productId").value;
+                    const color = document.getElementById("colorSelect").value;
+                    const quantity = parseInt(document.getElementById("quantityInput").value) || 1;
+
+                    fetch("/cart/add", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ productId, color, quantity })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                const cartCountElem = document.getElementById("cartCount");
+                                if (cartCountElem) cartCountElem.textContent = data.cartCount;
+                                alert("✅ Đã thêm vào giỏ hàng!");
+                                modal.style.display = 'none';
+                            } else {
+                                alert("❌ Không thể thêm vào giỏ hàng!");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Lỗi thêm giỏ hàng:", err);
+                            alert("❌ Lỗi khi thêm vào giỏ hàng!");
+                        });
+                });
+            </script>
+</body>
+
+</html>

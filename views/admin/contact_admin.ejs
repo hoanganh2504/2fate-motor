@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        <%= title %> - 2FATE Motor
+    </title>
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="stylesheet" href="/css/css_admin/contact_admin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Thêm Bootstrap Icons vào đây -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <%- include('../partials/header_admin') %>
+
+        <div class="container-fluid">
+            <div class="row">
+                <%- include('../partials/sidebar_admin') %>
+
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+                        <div class="main-content-wrapper">
+                            <!-- Bộ lọc -->
+                            <div class="filter-tabs">
+                                <button class="filter-btn active" data-filter="all" onclick="filterContacts('all')">
+                                    <i class="fas fa-inbox"></i>
+                                    Tất cả
+                                    <span class="badge">
+                                        <%= contacts.length %>
+                                    </span>
+                                </button>
+                                <button class="filter-btn" data-filter="pending" onclick="filterContacts('pending')">
+                                    <i class="fas fa-clock"></i>
+                                    Chưa trả lời
+                                    <span class="badge">
+                                        <%= contacts.filter(c=> c.status === 'pending').length %>
+                                    </span>
+                                </button>
+                                <button class="filter-btn" data-filter="processing"
+                                    onclick="filterContacts('processing')">
+                                    <i class="fas fa-spinner"></i>
+                                    Đang xử lý
+                                    <span class="badge">
+                                        <%= contacts.filter(c=> c.status === 'processing').length %>
+                                    </span>
+                                </button>
+                                <button class="filter-btn" data-filter="replied" onclick="filterContacts('replied')">
+                                    <i class="fas fa-check-circle"></i>
+                                    Đã trả lời
+                                    <span class="badge">
+                                        <%= contacts.filter(c=> c.status === 'replied').length %>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="chat-container">
+                                <!-- Sidebar -->
+                                <div class="contacts-sidebar">
+                                    <div class="sidebar-header">
+                                        <h2>
+                                            <i class="bi bi-chat-left-text"></i> Tin nhắn
+                                            <% if (contacts.filter(c=> c.status === 'pending').length > 0) { %>
+                                                <span class="notification-badge">
+                                                    <%= contacts.filter(c=> c.status === 'pending').length %>
+                                                </span>
+                                                <% } %>
+                                        </h2>
+                                    </div>
+
+                                    <div class="contacts-list" id="contactsList">
+                                        <% if (contacts.length===0) { %>
+                                            <div class="no-contacts">
+                                                <i class="fas fa-inbox"></i>
+                                                <p>Chưa có tin nhắn nào</p>
+                                            </div>
+                                            <% } else { %>
+                                                <% // Simple approach - just show unique contacts by email const
+                                                    uniqueContacts=[]; const seenEmails=new Set(); for (const contact of
+                                                    contacts) { if (!seenEmails.has(contact.email)) {
+                                                    seenEmails.add(contact.email); uniqueContacts.push(contact); } } %>
+
+                                                    <% uniqueContacts.forEach(contact=> { %>
+                                                        <div class="contact-item status-<%= contact.status %>"
+                                                            data-id="<%= contact.id %>"
+                                                            data-user-id="<%= contact.email %>"
+                                                            data-status="<%= contact.status %>"
+                                                            onclick="selectContact('<%= contact.email %>', '<%= contact.name %>')">
+                                                            <div class="contact-header">
+                                                                <div class="contact-name">
+                                                                    <span class="contact-status-dot"></span>
+                                                                    <%= contact.name %>
+                                                                </div>
+                                                            </div>
+                                                            <div class="contact-preview">
+                                                                <% let preview=contact.message; if
+                                                                    (preview.includes('\n\n[ADMIN REPLY]:')) {
+                                                                    preview=preview.split('\n\n[ADMIN REPLY]:')[0]; }
+                                                                    preview=preview.substring(0, 50) + '...' ; %>
+                                                                    <%= preview %>
+                                                            </div>
+                                                            <div class="contact-time">
+                                                                <%= new Date(contact.created_at).toLocaleString('vi-VN',
+                                                                    { hour: '2-digit' , minute: '2-digit' ,
+                                                                    day: '2-digit' , month: '2-digit' }) %>
+                                                            </div>
+                                                            <% if (contact.status==='pending' ) { %>
+                                                                <span class="unread-count">Mới</span>
+                                                                <% } %>
+                                                        </div>
+                                                        <% }) %>
+                                                            <% } %>
+                                    </div>
+                                </div>
+
+                                <!-- Chat area -->
+                                <div class="chat-area">
+                                    <div id="emptyState" class="empty-state">
+                                        <i class="fas fa-comments"></i>
+                                        <h3>Chọn một cuộc trò chuyện để bắt đầu</h3>
+                                    </div>
+
+                                    <div id="chatContent" style="display: none;">
+                                        <div class="chat-header">
+                                            <div class="chat-header-info">
+                                                <h3 id="chatName"></h3>
+                                                <p id="chatEmail"></p>
+                                            </div>
+                                            <div class="chat-actions">
+                                                <span class="status-badge" id="chatStatusBadge"></span>
+                                                <button class="action-btn btn-processing" id="btnMarkProcessing"
+                                                    onclick="updateUserStatus('processing')" style="display:none;">
+                                                    <i class="fas fa-spinner"></i> Đang xử lý
+                                                </button>
+                                                <button class="action-btn btn-replied" id="btnMarkReplied"
+                                                    onclick="updateUserStatus('replied')" style="display:none;">
+                                                    <i class="fas fa-check"></i> Đã trả lời
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="chat-messages" id="chatMessages"></div>
+
+                                        <div class="chat-input-area">
+                                            <form class="chat-input-form" onsubmit="sendAdminMessage(event)">
+                                                <textarea id="messageInput" rows="1"
+                                                    placeholder="Nhập tin nhắn... (Enter để gửi, Shift+Enter để xuống dòng)"
+                                                    onkeydown="handleKeyPress(event)"
+                                                    oninput="autoResize(this)"></textarea>
+                                                <button type="submit" class="send-btn">
+                                                    <i class="fas fa-paper-plane"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+            </div>
+        </div>
+
+        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+        <script>
+            const socket = io();
+            let currentUserEmail = null;
+            let currentUserName = null;
+            let currentContactId = null;
+            let currentFilter = 'all';
+            let allMessages = {};
+
+            function filterContacts(status) {
+                currentFilter = status;
+
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.filter === status) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                const contacts = document.querySelectorAll('.contact-item');
+                contacts.forEach(contact => {
+                    const contactStatus = contact.dataset.status;
+                    if (status === 'all' || contactStatus === status) {
+                        contact.style.display = 'block';
+                    } else {
+                        contact.style.display = 'none';
+                    }
+                });
+            }
+
+            async function selectContact(userEmail, userName) {
+                currentUserEmail = userEmail;
+                currentUserName = userName;
+
+                // Highlight contact
+                document.querySelectorAll('.contact-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.userId === userEmail) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Show chat content
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('chatContent').style.display = 'flex';
+
+                document.getElementById('chatName').textContent = userName;
+                document.getElementById('chatEmail').textContent = userEmail;
+
+                await loadUserMessages(userEmail);
+            }
+
+            async function loadUserMessages(userEmail) {
+                try {
+                    const response = await fetch(`/api/user-contacts/${encodeURIComponent(userEmail)}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        allMessages[userEmail] = data.messages;
+                        renderMessages();
+                        updateStatusDisplay(data.latestStatus);
+                    }
+                } catch (error) {
+                    console.error('Error loading messages:', error);
+                }
+            }
+
+            function renderMessages() {
+                const messagesDiv = document.getElementById('chatMessages');
+                messagesDiv.innerHTML = '';
+
+                const messages = allMessages[currentUserEmail] || [];
+
+                messages.forEach(msg => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${msg.type}`;
+                    messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="message-text">${escapeHtml(msg.content)}</div>
+                    <div class="message-time">
+                        ${new Date(msg.created_at).toLocaleString('vi-VN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        day: '2-digit',
+                        month: '2-digit'
+                    })}
+                    </div>
+                </div>
+            `;
+                    messagesDiv.appendChild(messageDiv);
+                });
+
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            function updateStatusDisplay(status) {
+                const statusBadge = document.getElementById('chatStatusBadge');
+                const btnProcessing = document.getElementById('btnMarkProcessing');
+                const btnReplied = document.getElementById('btnMarkReplied');
+
+                statusBadge.className = 'status-badge ' + status;
+
+                if (status === 'pending') {
+                    statusBadge.innerHTML = '<i class="fas fa-clock"></i> Chưa trả lời';
+                    btnProcessing.style.display = 'inline-flex';
+                    btnReplied.style.display = 'inline-flex';
+                } else if (status === 'processing') {
+                    statusBadge.innerHTML = '<i class="fas fa-spinner"></i> Đang xử lý';
+                    btnProcessing.style.display = 'none';
+                    btnReplied.style.display = 'inline-flex';
+                } else {
+                    statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> Đã trả lời';
+                    btnProcessing.style.display = 'none';
+                    btnReplied.style.display = 'none';
+                }
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            async function sendAdminMessage(event) {
+                event.preventDefault();
+
+                const input = document.getElementById('messageInput');
+                const message = input.value.trim();
+
+                if (!message || !currentUserEmail) return;
+
+                socket.emit('admin_reply', {
+                    userEmail: currentUserEmail,
+                    replyMessage: message
+                });
+
+                const newMessage = {
+                    type: 'admin',
+                    content: message,
+                    created_at: new Date().toISOString()
+                };
+
+                if (!allMessages[currentUserEmail]) {
+                    allMessages[currentUserEmail] = [];
+                }
+                allMessages[currentUserEmail].push(newMessage);
+
+                renderMessages();
+
+                input.value = '';
+                input.style.height = 'auto';
+            }
+
+            async function updateUserStatus(newStatus) {
+                if (!currentUserEmail) return;
+
+                try {
+                    const response = await fetch(`/api/update-user-status`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userEmail: currentUserEmail,
+                            status: newStatus
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        updateStatusDisplay(newStatus);
+                        const contactItem = document.querySelector(`[data-user-id="${currentUserEmail}"]`);
+                        if (contactItem) {
+                            contactItem.classList.remove('status-pending', 'status-processing', 'status-replied');
+                            contactItem.classList.add('status-' + newStatus);
+                            contactItem.dataset.status = newStatus;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                }
+            }
+
+            function handleKeyPress(event) {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    sendAdminMessage(event);
+                }
+            }
+
+            function autoResize(textarea) {
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+            }
+
+            // Socket events
+            socket.on('new_user_message', (data) => {
+                if (data.email === currentUserEmail) {
+                    const newMessage = {
+                        type: 'user',
+                        content: data.message,
+                        created_at: data.created_at
+                    };
+
+                    if (!allMessages[currentUserEmail]) {
+                        allMessages[currentUserEmail] = [];
+                    }
+                    allMessages[currentUserEmail].push(newMessage);
+                    renderMessages();
+                }
+
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification('Tin nhắn mới từ ' + data.username, {
+                        body: data.message.substring(0, 100)
+                    });
+                }
+
+                setTimeout(() => location.reload(), 2000);
+            });
+
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2FATE Motor</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        header.main-header {
+            position: relative;
+            z-index: 9999;
+        }
+
+        section.hero {
+            position: relative;
+            z-index: 1;
+            margin-top: 20px;
+            /* tránh header bị dính */
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <!-- Banner -->
+        <section class="hero">
+            <h1>2FATE MOTOR</h1>
+            <p class="slogan">RIDE FOR FREEDOM</p>
+            <div class="bike-slider">
+                <div class="bike-item">
+                    <img src="images/biker1.png" alt="Bike 1" class="bike-img" />
+                    <div class="bike-name">AirBlade 160cc Bản đen</div>
+                </div>
+                <div class="bike-item">
+                    <img src="images/biker2.png" alt="Bike 2" class="bike-img" />
+                    <div class="bike-name">AirBlade 160cc Bản đặc biệt</div>
+                </div>
+                <div class="bike-item">
+                    <img src="images/biker3.png" alt="Bike 3" class="bike-img" />
+                    <div class="bike-name">AirBlade 125cc Bản xám đen</div>
+                </div>
+                <div class="bike-item">
+                    <img src="images/biker4.png" alt="Bike 4" class="bike-img" />
+                    <div class="bike-name">AirBlade 125cc Bản xanh</div>
+                </div>
+                <div class="bike-item">
+                    <img src="images/biker5.png" alt="Bike 5" class="bike-img" />
+                    <div class="bike-name">Exiter</div>
+                </div>
+            </div>
+
+            <div class="slider-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+
+            <div class="slider-arrow left-arrow">&#10094;</div>
+            <div class="slider-arrow right-arrow">&#10095;</div>
+        </section>
+
+        <script>
+            let currentIndex = 1;
+            const bikes = document.querySelectorAll(".bike-img");
+            const dots = document.querySelectorAll(".dot");
+
+            function showBike(index) {
+                bikes.forEach((bike, i) => {
+                    bike.style.transform = i === index ? "scale(1.2) translateY(20px)" : "scale(1)";
+                    bike.style.opacity = i === index ? "1" : "0.5";
+                });
+                dots.forEach((dot, i) => dot.classList.toggle("active", i === index));
+                currentIndex = index;
+            }
+
+            document.querySelector(".left-arrow").onclick = () => showBike((currentIndex - 1 + bikes.length) % bikes.length);
+            document.querySelector(".right-arrow").onclick = () => showBike((currentIndex + 1) % bikes.length);
+            dots.forEach((dot, i) => (dot.onclick = () => showBike(i)));
+            setInterval(() => showBike((currentIndex + 1) % bikes.length), 3000);
+            showBike(currentIndex);
+        </script>
+
+        <section class="about-preview">
+            <h2>Về 2FATE Motor</h2>
+            <p>2FATE Motor chuyên cung cấp các dòng xe chính hãng với giá cả hợp lý và dịch vụ hậu mãi tận tâm.
+                Chúng tôi cam kết mang đến cho khách hàng những trải nghiệm tuyệt vời nhất.</p>
+            <a href="about" class="btn">Xem thêm</a>
+        </section>
+
+        <section class="featured-bikes">
+            <h2>Dòng xe nổi bật</h2>
+            <div class="bike-cards">
+                <div class="bike-card">
+                    <img src="images/biker1.png" alt="AirBlade" />
+                    <h3>AirBlade</h3>
+                    <a href="search" class="btn-small">Xem chi tiết</a>
+                </div>
+                <div class="bike-card">
+                    <img src="images/biker5.png" alt="Exiter" />
+                    <h3>Exiter</h3>
+                    <a href="search" class="btn-small">Xem chi tiết</a>
+                </div>
+                <div class="bike-card">
+                    <img src="images/biker3.png" alt="Vision" />
+                    <h3>Vision</h3>
+                    <a href="search" class="btn-small">Xem chi tiết</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="why-choose-us">
+            <h2>Tại sao chọn chúng tôi?</h2>
+            <div class="features">
+                <div class="feature"><span>🛠</span>
+                    <p>Bảo hành chính hãng</p>
+                </div>
+                <div class="feature"><span>🚚</span>
+                    <p>Giao xe nhanh chóng</p>
+                </div>
+                <div class="feature"><span>💳</span>
+                    <p>Hỗ trợ trả góp</p>
+                </div>
+            </div>
+        </section>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

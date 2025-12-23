@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết Đơn hàng #<%= order.id %> - 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .info-card {
+            border-left: 4px solid #0d6efd;
+        }
+
+        .product-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../partials/header_admin') %>
+        <div class="container-fluid">
+            <div class="row">
+                <%- include('../partials/sidebar_admin') %>
+
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h1 class="text-primary"><i class="bi bi-receipt-cutoff"></i> Chi tiết Đơn hàng #<%=
+                                        order.id %>
+                                </h1>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                        <li class="breadcrumb-item"><a href="/admin/orders">Đơn hàng</a></li>
+                                        <li class="breadcrumb-item active">#<%= order.id %>
+                                        </li>
+                                    </ol>
+                                </nav>
+                            </div>
+                            <div>
+                                <button onclick="window.print()" class="btn btn-secondary">
+                                    <i class="bi bi-printer"></i> In
+                                </button>
+                                <a href="/admin/orders" class="btn btn-primary">
+                                    <i class="bi bi-arrow-left"></i> Quay lại
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Thông tin đơn hàng -->
+                            <div class="col-md-8">
+                                <!-- Thông tin chung -->
+                                <div class="card shadow-sm border-0 mb-4 info-card">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Thông tin đơn hàng</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="text-muted small">Mã đơn hàng</label>
+                                                <div class="fw-bold">#<%= order.id %>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="text-muted small">Ngày đặt</label>
+                                                <div>
+                                                    <%= new Date(order.created_at).toLocaleString('vi-VN') %>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="text-muted small">Trạng thái thanh toán</label>
+                                                <div>
+                                                    <% if (order.payment_status==='Đã thanh toán' ) { %>
+                                                        <span class="badge bg-success fs-6"><i
+                                                                class="bi bi-check-circle"></i> Đã thanh toán</span>
+                                                        <% } else if (order.payment_status==='Đang thanh toán' ) { %>
+                                                            <span class="badge bg-warning fs-6"><i
+                                                                    class="bi bi-clock"></i> Đang xử lý</span>
+                                                            <% } else { %>
+                                                                <span class="badge bg-secondary fs-6">
+                                                                    <%= order.payment_status %>
+                                                                </span>
+                                                                <% } %>
+                                                </div>
+                                            </div>
+                                            <% if (order.payment_expires_at) { %>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="text-muted small">Hết hạn thanh toán</label>
+                                                    <div class="text-danger">
+                                                        <%= new Date(order.payment_expires_at).toLocaleString('vi-VN')
+                                                            %>
+                                                    </div>
+                                                </div>
+                                                <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Danh sách sản phẩm -->
+                                <div class="card shadow-sm border-0 mb-4">
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0"><i class="bi bi-box-seam"></i> Sản phẩm đã đặt (<%=
+                                                items.length %>)</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Sản phẩm</th>
+                                                        <th width="15%">Đơn giá</th>
+                                                        <th width="12%">Số lượng</th>
+                                                        <th width="15%">Thành tiền</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% let subtotal=0; %>
+                                                        <% items.forEach(item=> { %>
+                                                            <% const itemTotal=item.price * item.quantity; %>
+                                                                <% subtotal +=itemTotal; %>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div class="d-flex align-items-center">
+                                                                                <img src="<%= item.image || '/images/no-image.png' %>"
+                                                                                    alt="<%= item.name %>"
+                                                                                    class="product-img me-3">
+                                                                                <div>
+                                                                                    <div class="fw-bold">
+                                                                                        <%= item.name %>
+                                                                                    </div>
+                                                                                    <small class="text-muted">ID: <%=
+                                                                                            item.product_id %></small>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <%= item.price.toLocaleString('vi-VN') %> ₫
+                                                                        </td>
+                                                                        <td><span class="badge bg-secondary">
+                                                                                <%= item.quantity %>
+                                                                            </span></td>
+                                                                        <td class="fw-bold text-danger">
+                                                                            <%= itemTotal.toLocaleString('vi-VN') %> ₫
+                                                                        </td>
+                                                                    </tr>
+                                                                    <% }) %>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="table-light">
+                                                        <td colspan="3" class="text-end fw-bold">Tạm tính:</td>
+                                                        <td class="fw-bold">
+                                                            <%= subtotal.toLocaleString('vi-VN') %> ₫
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="table-light">
+                                                        <td colspan="3" class="text-end fw-bold">Phí vận chuyển:</td>
+                                                        <td class="fw-bold text-success">Miễn phí</td>
+                                                    </tr>
+                                                    <tr class="table-warning">
+                                                        <td colspan="3" class="text-end fw-bold fs-5">TỔNG CỘNG:</td>
+                                                        <td class="fw-bold text-danger fs-5">
+                                                            <%= order.total_price.toLocaleString('vi-VN') %> ₫
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sidebar thông tin khách hàng -->
+                            <div class="col-md-4">
+                                <!-- Thông tin khách hàng -->
+                                <div class="card shadow-sm border-0 mb-4">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="mb-0"><i class="bi bi-person-circle"></i> Thông tin khách hàng</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="text-muted small">Tên khách hàng</label>
+                                            <div class="fw-bold">
+                                                <%= order.username || 'N/A' %>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="text-muted small">Email</label>
+                                            <div>
+                                                <%= order.email || 'N/A' %>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="text-muted small">ID người dùng</label>
+                                            <div class="text-muted">#<%= order.user_id %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Địa chỉ giao hàng -->
+                                <div class="card shadow-sm border-0 mb-4">
+                                    <div class="card-header bg-warning">
+                                        <h6 class="mb-0"><i class="bi bi-geo-alt"></i> Địa chỉ giao hàng</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="text-muted small">Số điện thoại</label>
+                                            <div class="fw-bold">
+                                                <i class="bi bi-telephone"></i>
+                                                <%= order.phone || 'Chưa có' %>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="text-muted small">Địa chỉ</label>
+                                            <div>
+                                                <%= order.address || 'Chưa có địa chỉ' %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hành động -->
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-header bg-dark text-white">
+                                        <h6 class="mb-0"><i class="bi bi-gear"></i> Hành động</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <% if (order.status !=='cancelled' ) { %>
+                                            <button class="btn btn-warning w-100 mb-2" onclick="updateStatus()">
+                                                <i class="bi bi-pencil"></i> Cập nhật trạng thái
+                                            </button>
+                                            <button class="btn btn-danger w-100" onclick="cancelOrder()">
+                                                <i class="bi bi-x-circle"></i> Hủy đơn hàng
+                                            </button>
+                                            <% } else { %>
+                                                <div class="alert alert-danger mb-0">
+                                                    <i class="bi bi-exclamation-triangle"></i> Đơn hàng đã bị hủy
+                                                </div>
+                                                <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function updateStatus() {
+                const newStatus = prompt('Nhập trạng thái mới (pending/completed/cancelled):', '<%= order.status %>');
+                if (newStatus && ['pending', 'completed', 'cancelled'].includes(newStatus)) {
+                    fetch('/admin/orders/update-status/<%= order.id %>', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: newStatus })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Cập nhật thành công!');
+                                location.reload();
+                            } else {
+                                alert('Lỗi: ' + data.message);
+                            }
+                        });
+                } else if (newStatus) {
+                    alert('Trạng thái không hợp lệ!');
+                }
+            }
+
+            function cancelOrder() {
+                if (confirm('⚠️ Bạn có chắc muốn HỦY đơn hàng #<%= order.id %>?')) {
+                    fetch('/admin/orders/cancel/<%= order.id %>', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Đơn hàng đã được hủy!');
+                                location.reload();
+                            } else {
+                                alert('Lỗi: ' + data.message);
+                            }
+                        });
+                }
+            }
+        </script>
+
+        <script>
+            // ✅ Tự động cập nhật trạng thái trong trang chi tiết
+            (function () {
+                const paymentStatus = '<%= order.payment_status %>';
+
+                if (paymentStatus !== 'Đang thanh toán') return;
+
+                const createdAt = new Date('<%= order.created_at %>');
+                const expireTime = new Date(createdAt.getTime() + 15 * 60 * 1000);
+                const now = new Date();
+                const remainingMs = expireTime - now;
+
+                if (remainingMs <= 0) {
+                    updateToExpired();
+                } else {
+                    setTimeout(() => {
+                        updateToExpired();
+                    }, remainingMs);
+
+                    console.log(`Đơn hàng sẽ hết hạn sau ${Math.ceil(remainingMs / 60000)} phút`);
+                }
+
+                function updateToExpired() {
+                    const badge = document.querySelector('.badge.bg-warning');
+                    if (badge) {
+                        badge.className = 'badge bg-danger fs-6';
+                        badge.innerHTML = '<i class="bi bi-x-circle"></i> Hết hạn thanh toán';
+                    }
+
+                    console.log('✅ Đã cập nhật trạng thái hết hạn');
+                }
+            })();
+        </script>
+</body>
+
+</html>

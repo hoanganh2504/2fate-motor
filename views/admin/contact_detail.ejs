@@ -1,0 +1,49 @@
+<div class="contact-detail-content">
+    <input type="hidden" id="contactId" value="<%= contact.id %>">
+    <input type="hidden" id="contactName" value="<%= contact.name %>">
+    <input type="hidden" id="contactEmail" value="<%= contact.email %>">
+    <input type="hidden" id="contactStatus" value="<%= contact.status %>">
+    <input type="hidden" id="contactMessage" value="<%= contact.message %>">
+    <input type="hidden" id="contactCreatedAt" value="<%= contact.created_at %>">
+
+    <div class="info-row">
+        <strong><i class="fas fa-user"></i> Tên:</strong>
+        <span>
+            <%= contact.name %>
+        </span>
+    </div>
+
+    <div class="info-row">
+        <strong><i class="fas fa-envelope"></i> Email:</strong>
+        <span>
+            <%= contact.email %>
+        </span>
+    </div>
+
+    <div class="info-row">
+        <strong><i class="fas fa-calendar"></i> Ngày gửi:</strong>
+        <span>
+            <%= new Date(contact.created_at).toLocaleString('vi-VN') %>
+        </span>
+    </div>
+
+    <div class="info-row">
+        <strong><i class="fas fa-info-circle"></i> Trạng thái:</strong>
+        <span class="status-badge status-<%= contact.status %>">
+            <% if (contact.status==='pending' ) { %>
+                Chờ xử lý
+                <% } else if (contact.status==='replied' ) { %>
+                    Đã trả lời
+                    <% } else { %>
+                        Đã đóng
+                        <% } %>
+        </span>
+    </div>
+
+    <div class="message-detail">
+        <h3><i class="fas fa-comment"></i> Nội dung tin nhắn:</h3>
+        <p style="white-space: pre-wrap; line-height: 1.6;">
+            <%= contact.message %>
+        </p>
+    </div>
+</div>

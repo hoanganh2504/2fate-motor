@@ -1,0 +1,40 @@
+/* CSS nền tối toàn cục */
+body.dark-mode {
+    background-color: #121212;
+    color: #f1f1f1;
+}
+
+/* Header */
+body.dark-mode header,
+body.dark-mode nav {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+}
+
+/* Card sản phẩm, button, bảng... */
+body.dark-mode .card,
+body.dark-mode .container,
+body.dark-mode .content {
+    background-color: #1c1c1c;
+    color: #fff;
+    border-color: #333;
+}
+
+/* Input và button */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #2a2a2a;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+body.dark-mode button {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #666;
+}
+
+body.dark-mode a {
+    color: #9dc1ff;
+}

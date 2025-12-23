@@ -1,0 +1,370 @@
+:root {
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --accent: #1e90ff;
+    --accent-dark: #1266d1;
+    --success: #28a745;
+    --muted: #6b7280;
+    --radius: 12px;
+}
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: var(--bg);
+    color: #111827;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+.checkout-page {
+    padding: 28px 20px 60px
+}
+
+.checkout-card {
+    max-width: 1150px;
+    margin: 28px auto;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    padding: 22px;
+}
+
+.checkout-card .left,
+.checkout-card .right {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(13, 18, 29, 0.06);
+}
+
+.checkout-card .left {
+    flex: 1.4;
+    padding: 22px;
+}
+
+.checkout-card .right {
+    flex: 0.8;
+    padding: 22px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px
+}
+
+.brand .logo {
+    width: 60px;
+    height: auto;
+    border-radius: 8px
+}
+
+.brand h1 {
+    font-size: 20px;
+    margin: 0
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px
+}
+
+.qr-area {
+    display: flex;
+    gap: 18px;
+    margin-top: 18px;
+    align-items: center
+}
+
+.qr-box {
+    width: 250px;
+    height: 250px;
+    background: linear-gradient(180deg, #fff, #f8fbff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid #eef2ff;
+    padding: 12px
+}
+
+.qr-img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    border-radius: 8px
+}
+
+.qr-meta {
+    flex: 1
+}
+
+.meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed #f1f5f9
+}
+
+.meta-label {
+    color: var(--muted)
+}
+
+.meta-value {
+    font-weight: 600
+}
+
+.meta-row.total {
+    font-size: 18px;
+    padding-top: 10px;
+    border-top: 1px dashed #f1f5f9;
+    margin-top: 8px
+}
+
+.notice {
+    margin-top: 14px;
+    padding: 12px;
+    background: #fff7ed;
+    border-left: 4px solid #ffd58a;
+    border-radius: 8px;
+    color: #7a4b00;
+    font-size: 14px
+}
+
+.summary h2 {
+    margin: 0 0 12px 0
+}
+
+.items {
+    max-height: 260px;
+    overflow: auto;
+    padding-right: 6px;
+    margin-bottom: 12px
+}
+
+.item-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f3f4f6
+}
+
+.mini-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover
+}
+
+.item-info .name {
+    font-weight: 600
+}
+
+.item-info .meta {
+    color: var(--muted);
+    font-size: 13px
+}
+
+.price {
+    margin-left: auto;
+    font-weight: 700
+}
+
+.divider {
+    height: 1px;
+    background: #f3f4f6;
+    margin: 12px 0;
+    border-radius: 4px
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    margin-bottom: 12px
+}
+
+.total-row .bold {
+    font-weight: 800;
+    font-size: 18px;
+    color: #111
+}
+
+.countdown {
+    margin-bottom: 12px
+}
+
+.countdown #count {
+    font-weight: 700;
+    color: var(--accent-dark)
+}
+
+progress {
+    width: 100%;
+    height: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 8px
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(30, 144, 255, 0.18);
+}
+
+.btn-primary:hover {
+    background: var(--accent-dark)
+}
+
+.btn-outline {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #e6eefc;
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btn-link {
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 10px;
+    color: var(--muted);
+    text-decoration: underline;
+    background: transparent;
+    border: none;
+    padding: 0
+}
+
+.order-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 18px
+}
+
+.tips {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center
+}
+
+/* success page */
+.success-page {
+    padding: 60px 20px
+}
+
+.success-card {
+    max-width: 720px;
+    margin: 40px auto;
+    padding: 36px 30px;
+    background: var(--card);
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 14px 40px rgba(13, 18, 29, 0.06)
+}
+
+.success-card .icon {
+    font-size: 48px;
+    margin-bottom: 8px
+}
+
+.success-card h1 {
+    margin: 8px 0 6px;
+    font-size: 22px
+}
+
+.success-card .muted {
+    color: var(--muted);
+    margin-bottom: 18px
+}
+
+.order-actions a {
+    padding: 12px 18px;
+    border-radius: 10px;
+    text-decoration: none
+}
+
+.order-actions .btn-primary {
+    background: var(--accent)
+}
+
+.order-actions .btn-outline {
+    border: 1px solid #e6eefc;
+    color: var(--accent);
+    background: transparent;
+    margin-left: 8px
+}
+
+/* small screens */
+@media (max-width: 900px) {
+    .checkout-card {
+        flex-direction: column;
+        padding: 12px
+    }
+
+    .checkout-card .right {
+        order: 2
+    }
+
+    .checkout-card .left {
+        order: 1
+    }
+
+    .qr-area {
+        flex-direction: column;
+        align-items: center
+    }
+
+    .qr-box {
+        width: 200px;
+        height: 200px
+    }
+
+    .items {
+        max-height: 220px
+    }
+}
+
+.hidden {
+    display: none
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: rgba(255, 255, 255, 0.9);
+    animation: spin .8s linear infinite;
+    display: inline-block;
+    vertical-align: middle
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg)
+    }
+}

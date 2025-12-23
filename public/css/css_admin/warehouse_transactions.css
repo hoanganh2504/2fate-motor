@@ -1,0 +1,72 @@
+.transaction-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 0;
+    margin-bottom: 15px;
+    padding: 20px;
+    transition: transform 0.2s;
+}
+
+.transaction-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.transaction-card.import {
+    border-left: 4px solid #198754;
+}
+
+.transaction-card.export {
+    border-left: 4px solid #dc3545;
+}
+
+.transaction-card.adjustment {
+    border-left: 4px solid #fd7e14;
+}
+
+.type-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.type-badge.type-import {
+    background: #d4edda;
+    color: #155724;
+}
+
+.type-badge.type-export {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.type-badge.type-adjustment {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-card h4 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.filter-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+

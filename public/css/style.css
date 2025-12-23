@@ -1,0 +1,318 @@
+/* Reset mặc định */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    /* sửa lỗi padding */
+}
+
+.logo-nav {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.logo-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    height: 150px;
+    /* fix logo nhỏ lại */
+}
+
+.main-nav {
+    display: flex;
+    gap: 60px;
+    margin-left: 100px;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: black;
+    padding: 10px 15px;
+}
+
+.main-nav a.active {
+    color: red;
+    font-weight: bold;
+    border-bottom: 2px solid red;
+}
+
+/* Icon container */
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-right: 20px;
+}
+
+.header-icons img {
+    width: 50px;
+    height: 35px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.header-icons img:hover {
+    transform: scale(1.1);
+}
+
+/* Cart badge */
+.icon-cart {
+    position: relative;
+    display: inline-block;
+}
+
+#cartCount {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 50%;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* Username label */
+.username-label {
+    margin-top: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+/* User dropdown */
+.user-dropdown {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 12px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 150px;
+}
+
+.user-dropdown p {
+    margin: 0 0 8px;
+    font-size: 14px;
+}
+
+.logout-link {
+    color: red;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+/* --- HERO SECTION --- */
+.hero {
+    position: relative;
+    text-align: center;
+    padding: 60px 0 140px;
+    /* chừa chỗ cho dots và arrows */
+    background: #f9f9f9;
+}
+
+.hero h1 {
+    font-size: 80px;
+    font-weight: 700;
+    color: #800000;
+    margin-bottom: 20px;
+}
+
+.hero .slogan {
+    font-size: 70px;
+    font-style: italic;
+    font-weight: 900;
+    color: #bb6666;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    line-height: 1.2;
+}
+
+/* --- SLIDER --- */
+.bike-slider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 0;
+    z-index: 2;
+}
+
+.bike-slider img {
+    width: 200px;
+    margin: 10px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.bike-slider img:hover {
+    transform: scale(1.05);
+}
+
+.bike-item {
+    text-align: center;
+    /* căn giữa ảnh và tên */
+    margin: 10px;
+}
+
+.bike-img {
+    display: block;
+    margin: 0 auto;
+}
+
+.bike-name {
+    margin-top: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Dots */
+.slider-dots {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: #800000;
+}
+
+/* Arrows */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 40px;
+    color: #800000;
+    cursor: pointer;
+    z-index: 3;
+    user-select: none;
+}
+
+.left-arrow {
+    left: 30px;
+}
+
+.right-arrow {
+    right: 30px;
+}
+
+/* Footer */
+.site-footer {
+    background-color: #222;
+    /* nền đen xám */
+    color: #fff;
+    /* chữ trắng */
+    text-align: center;
+    /* căn giữa nội dung */
+    padding: 20px 0;
+    /* khoảng cách trên dưới */
+    margin-top: 40px;
+    /* cách phần nội dung phía trên */
+}
+
+.site-footer a {
+    color: #ff4d4d;
+    /* link màu đỏ */
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Sections */
+.about-preview,
+.featured-bikes,
+.why-choose-us {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.about-preview p {
+    max-width: 600px;
+    margin: 10px auto;
+    color: #555;
+}
+
+.bike-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.bike-card {
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.bike-card:hover {
+    transform: translateY(-5px);
+}
+
+.bike-card img {
+    max-width: 150px;
+}
+
+.why-choose-us .features {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.feature span {
+    font-size: 30px;
+    display: block;
+    margin-bottom: 10px;
+}
+

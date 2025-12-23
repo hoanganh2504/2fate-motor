@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FATE Motor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/blog.css">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <!-- Blog Banner -->
+    <section class="blog-banner">
+        <h1>📖 Blog & Đánh giá xe</h1>
+        <p>Cập nhật tin tức, trải nghiệm và đánh giá mô tô mới nhất từ 2FATE Motor.</p>
+    </section>
+    
+    <!-- Blog List -->
+    <section class="blog-list">
+        <div class="blog-card">
+            <img src="images/blog1.jpg" alt="Review 1">
+            <div class="blog-info">
+                <h3>Đánh giá Yamaha R7 2025</h3>
+                <p class="date">Ngày đăng: 20/09/2025</p>
+                <p class="excerpt">Chiếc sportbike được mong chờ nhất năm, kết hợp giữa hiệu năng mạnh mẽ và thiết kế hiện
+                    đại...</p>
+                <button class="btn-read" data-title="Đánh giá Yamaha R7 2025"
+                    data-content="Chiếc Yamaha R7 2025 mang đến trải nghiệm lái tuyệt vời với động cơ mạnh mẽ, thiết kế khí động học cùng nhiều công nghệ tiên tiến. Đây chắc chắn là lựa chọn hoàn hảo cho biker đam mê tốc độ.">Xem
+                    chi tiết</button>
+            </div>
+        </div>
+    
+        <div class="blog-card">
+            <img src="images/blog2.jpg" alt="Review 2">
+            <div class="blog-info">
+                <h3>Top 5 mô tô đáng mua năm 2025</h3>
+                <p class="date">Ngày đăng: 05/09/2025</p>
+                <p class="excerpt">Danh sách những chiếc xe được biker yêu thích nhất, cân bằng giữa giá trị và hiệu năng...
+                </p>
+                <button class="btn-read" data-title="Top 5 mô tô đáng mua năm 2025"
+                    data-content="Trong năm 2025, các dòng xe như Kawasaki Z900, Yamaha MT-07, Honda CBR500R, BMW G310R và Ducati Monster 797 đã được nhiều biker đánh giá cao nhờ thiết kế đẹp, động cơ bền bỉ và giá thành hợp lý.">Xem
+                    chi tiết</button>
+            </div>
+        </div>
+    
+        <div class="blog-card">
+            <img src="images/blog3.jpg" alt="Review 3">
+            <div class="blog-info">
+                <h3>Kinh nghiệm phượt dài ngày</h3>
+                <p class="date">Ngày đăng: 28/08/2025</p>
+                <p class="excerpt">Chuẩn bị kỹ lưỡng, trang bị đầy đủ và tuân thủ an toàn để có chuyến đi tuyệt vời...</p>
+                <button class="btn-read" data-title="Kinh nghiệm phượt dài ngày"
+                    data-content="Khi phượt dài ngày, biker cần chú ý bảo dưỡng xe trước khi đi, chuẩn bị đồ bảo hộ, mang theo vật dụng cần thiết và luôn giữ an toàn trên đường. Đây là bí quyết để tận hưởng trọn vẹn hành trình.">Xem
+                    chi tiết</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Modal -->
+    <div id="blogModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalContent"></p>
+        </div>
+    </div>
+
+
+</body>
+
+<%- include('partials/footer') %>
+
+<script src="js/blog.js"></script>
+
+</html>

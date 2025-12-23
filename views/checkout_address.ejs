@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nhập địa chỉ - 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+    <style>
+/* Bố cục chung của trang thanh toán */
+.checkout-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f6fa; /* Màu nền nhẹ nhàng */
+    padding: 20px;
+}
+
+/* Thẻ chứa form */
+.checkout-card {
+    background-color: #ffffff; /* Màu nền của card */
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    max-width: 500px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.checkout-card:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
+}
+
+/* Tiêu đề của form */
+.checkout-card h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 30px;
+    color: #222;
+    font-weight: 700;
+}
+
+/* Nhóm các trường form */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Trường nhập liệu */
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    border-color: #0069d9;
+    box-shadow: 0 0 8px rgba(0, 105, 217, 0.2);
+}
+
+/* Nút bấm */
+.btn {
+    width: 100%;
+    padding: 14px 0;
+    background-color: #0069d9;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <main class="checkout-page">
+            <section class="checkout-card">
+                <h1>Thông tin giao hàng</h1>
+                <form action="/checkout/address" method="POST" class="checkout-form">
+                    <div class="form-group">
+                        <label for="address">Địa chỉ giao hàng</label>
+                        <input type="text" id="address" name="address" placeholder="Nhập địa chỉ của bạn" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại liên hệ</label>
+                        <input type="text" id="phone" name="phone" placeholder="Nhập số điện thoại" required>
+                    </div>
+                
+                    <button type="submit" class="btn">Tiếp tục thanh toán ➜</button>
+                </form>
+
+            </section>
+        </main>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FATE Motor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/search.css">
+    <style>
+        .warehouse-info {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .warehouse-stock {
+            display: inline-block;
+            margin-right: 15px;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        .in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .low-stock {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .out-of-stock {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <!-- Search + filters -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Nhập tên xe... (gõ để lọc nhanh)">
+
+            <!-- Loại xe -->
+            <select id="typeFilter">
+                <option value="">--Loại xe--</option>
+                <% types.forEach(type=> { %>
+                    <option value="<%= type.name.toLowerCase().replace(/\s+/g, '-') %>">
+                        <%= type.name %>
+                    </option>
+                    <% }) %>
+            </select>
+
+            <!-- Dung tích -->
+            <select id="ccFilter">
+                <option value="">--Dung tích--</option>
+                <% ccs.forEach(cc=> { %>
+                    <option value="<%= cc.name.replace('cc', '').trim() %>">
+                        <%= cc.name %>
+                    </option>
+                    <% }) %>
+            </select>
+
+            <!-- Màu sắc -->
+            <select id="colorFilter">
+                <option value="">--Màu sắc--</option>
+                <% colors.forEach(color=> { %>
+                    <option value="<%= color.name.toLowerCase() %>">
+                        <%= color.name %>
+                    </option>
+                    <% }) %>
+            </select>
+
+            <button id="searchBtn">Lọc</button>
+            <button id="clearBtn" type="button">Xóa</button>
+        </div>
+
+        <!-- Danh sách sản phẩm -->
+        <div class="results" id="results"></div>
+
+        <!-- Chi tiết sản phẩm (ẩn mặc định) -->
+        <div id="product-detail" style="display:none; padding:20px;"></div>
+
+        <!-- Footer -->
+        <%- include('partials/footer') %>
+
+            <!-- Link JS -->
+            <script src="/js/search.js"></script>
+</body>
+
+</html>

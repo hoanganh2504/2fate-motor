@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Phiếu nhập kho - 2FATE Motor</title>
+
+    <!-- Đồng bộ với admin dashboard -->
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/css_admin/import_receipts.css">
+</head>
+
+<body>
+    <%- include('../partials/header_admin') %>
+
+        <div class="container-fluid">
+            <div class="row">
+
+                <%- include('../partials/sidebar_admin') %>
+
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="text-primary">
+                                <i class="bi bi-box-arrow-in-down"></i> Phiếu nhập kho
+                            </h1>
+                            <a href="/admin/import-receipts/new" class="btn btn-primary shadow-sm">
+                                <i class="bi bi-plus-circle"></i> Tạo phiếu nhập
+                            </a>
+                        </div>
+
+                        <% if (receipts.length===0) { %>
+
+                            <div class="alert alert-info shadow-sm border-0">
+                                <i class="bi bi-info-circle"></i> Chưa có phiếu nhập nào.
+                                <a href="/admin/import-receipts/new" class="alert-link">Tạo phiếu nhập mới</a>
+                            </div>
+
+                            <% } else { %>
+
+                                <% receipts.forEach(receipt=> { %>
+
+                                    <div class="receipt-card">
+
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <h5 class="mb-1">
+                                                    <i class="bi bi-file-earmark-text text-primary"></i>
+                                                    <%= receipt.receipt_code %>
+                                                </h5>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-calendar3"></i>
+                                                    Ngày nhập:
+                                                    <%= new Date(receipt.import_date).toLocaleString('vi-VN') %>
+                                                </small>
+                                            </div>
+
+                                            <span class="status-badge status-<%= receipt.status %>">
+                                                <i class="bi bi-check-circle"></i>
+                                                Đã hoàn thành
+                                            </span>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="d-flex align-items-start">
+                                                    <i class="bi bi-building fs-5 text-primary me-2"></i>
+                                                    <div>
+                                                        <small class="text-muted">Kho nhập</small>
+                                                        <p class="mb-0 fw-semibold">
+                                                            <%= receipt.warehouse_name %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="d-flex align-items-start">
+                                                    <i class="bi bi-truck fs-5 text-primary me-2"></i>
+                                                    <div>
+                                                        <small class="text-muted">Nhà cung cấp</small>
+                                                        <p class="mb-0 fw-semibold">
+                                                            <%= receipt.supplier_name || 'N/A' %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <div class="d-flex align-items-start">
+                                                    <i class="bi bi-box-seam fs-5 text-warning me-2"></i>
+                                                    <div>
+                                                        <small class="text-muted">Số mặt hàng</small>
+                                                        <p class="mb-0 fw-semibold">
+                                                            <%= receipt.item_count %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="d-flex align-items-start">
+                                                    <i class="bi bi-cash-stack fs-5 text-success me-2"></i>
+                                                    <div>
+                                                        <small class="text-muted">Tổng giá trị</small>
+                                                        <p class="mb-0 fw-bold text-success">
+                                                            <%= new
+                                                                Intl.NumberFormat('vi-VN').format(receipt.total_amount)
+                                                                %> ₫
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-1 text-end">
+                                                <a href="/admin/import-receipts/<%= receipt.id %>"
+                                                    class="btn btn-sm btn-primary shadow-sm">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <% }) %>
+
+                                        <% } %>
+
+                    </main>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

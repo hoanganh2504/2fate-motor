@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên hệ - 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/contact.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Chat Widget Styles (giữ nguyên) */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .chat-toggle-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .chat-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .chat-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .chat-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        .chat-window.active {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-window-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-window-header h3 {
+            margin: 0;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .chat-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .chat-message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .chat-message.admin .message-avatar {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .chat-message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.admin .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input-wrapper textarea {
+            flex: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 14px;
+            resize: none;
+            font-family: inherit;
+            max-height: 100px;
+            transition: 0.3s;
+        }
+
+        .chat-input-wrapper textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .chat-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .welcome-message {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message i {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .welcome-message h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .welcome-message p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Cấu trúc mới cho trang liên hệ */
+        .contact-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('/images/contact-bg.jpg') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 60px;
+            border-radius: 10px;
+        }
+
+        .contact-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .contact-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Phần giới thiệu */
+        .about-section {
+            background: white;
+            border-radius: 15px;
+            padding: 60px 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+            font-size: 2.5rem;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .team-image {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s ease;
+        }
+
+        .team-image:hover {
+            transform: translateY(-10px);
+        }
+
+        .team-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .about-text {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .about-text h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .about-text p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-left: 4px solid #667eea;
+            padding: 25px;
+            border-radius: 0 10px 10px 0;
+            margin: 30px 0;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .value-item {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .value-item:hover {
+            background: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .value-item i {
+            font-size: 40px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .value-item h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Phần thông tin liên hệ (đặt ở cuối) */
+        .contact-info-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            border-radius: 15px;
+            margin-top: 60px;
+        }
+
+        .contact-info-section .section-title {
+            color: white;
+        }
+
+        .contact-info-section .section-title:after {
+            background: white;
+        }
+
+        .contact-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .contact-card i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .contact-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .contact-card p,
+        .contact-card a {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-card a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Map section */
+        .map-section {
+            margin-top: 60px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .team-image {
+                order: -1;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-window {
+                width: calc(100vw - 20px);
+                height: calc(100vh - 120px);
+                right: 10px;
+                bottom: 80px;
+            }
+
+            .contact-hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .about-section {
+                padding: 40px 20px;
+            }
+
+            .contact-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <!-- Hero Section -->
+        <section class="contact-hero">
+            <div class="container">
+                <h1>Kết nối với 2FATE Motor</h1>
+                <p>Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn trên hành trình khám phá thế giới xe máy</p>
+            </div>
+        </section>
+
+        <!-- Phần giới thiệu về 2FATE -->
+        <section class="about-section">
+            <div class="container">
+                <h2 class="section-title">Về 2FATE Motor</h2>
+
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>Hành trình 10 năm đồng hành cùng đam mê</h3>
+                        <p>Từ những ngày đầu thành lập vào năm 2010, 2FATE Motor đã mang trong mình sứ mệnh đặc biệt:
+                            không chỉ là nơi mua bán xe máy, mà còn là điểm hẹn của những trái tim đam mê tốc độ và công
+                            nghệ.</p>
+
+                        <div class="highlight-box">
+                            <h4>Sứ mệnh của chúng tôi</h4>
+                            <p>Mang đến cho khách hàng những trải nghiệm mua sắm xe máy toàn diện nhất - từ tư vấn
+                                chuyên sâu, dịch vụ bảo hành chu đáo đến chăm sóc hậu mãi tận tâm.</p>
+                        </div>
+
+                        <p>Với đội ngũ kỹ thuật viên được đào tạo bài bản và chuyên gia tư vấn giàu kinh nghiệm, mỗi
+                            chiếc xe từ 2FATE đều được kiểm định nghiêm ngặt, đảm bảo chất lượng và an toàn tuyệt đối.
+                        </p>
+                    </div>
+
+                    <div class="team-image">
+                        <img src="/images/team.jpg" alt="Đội ngũ 2FATE Motor">
+                    </div>
+                </div>
+
+                <div class="values-grid">
+                    <div class="value-item">
+                        <i class="fas fa-medal"></i>
+                        <h4>Chất lượng đỉnh cao</h4>
+                        <p>Cam kết 100% xe chính hãng, đầy đủ giấy tờ và bảo hành toàn diện</p>
+                    </div>
+
+                    <div class="value-item">
+                        <i class="fas fa-user-graduate"></i>
+                        <h4>Chuyên gia đầu ngành</h4>
+                        <p>Đội ngũ kỹ thuật với chứng chỉ quốc tế, kinh nghiệm 5-10 năm</p>
+                    </div>
+
+                    <div class="value-item">
+                        <i class="fas fa-handshake"></i>
+                        <h4>Đồng hành trọn đời</h4>
+                        <p>Hỗ trợ kỹ thuật 24/7, bảo dưỡng định kỳ, thay thế phụ tùng chính hãng</p>
+                    </div>
+
+                    <div class="value-item">
+                        <i class="fas fa-heart"></i>
+                        <h4>Cộng đồng đam mê</h4>
+                        <p>Tổ chức các sự kiện, giao lưu và chia sẻ kiến thức về xe máy</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section class="map-section">
+            <div class="container">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4241841039615!2d106.70027831526083!3d10.779733661956558!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f46fb7b9c9f%3A0x5c80a4b4b4b4b4b4!2s2FATE%20Motor!5e0!3m2!1svi!2s!4v1620000000000!5m2!1svi!2s"
+                    width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- Phần thông tin liên hệ (đặt ở cuối) -->
+        <section class="contact-info-section">
+            <div class="container">
+                <h2 class="section-title">Thông tin liên hệ</h2>
+                <p class="text-center" style="margin-bottom: 50px; font-size: 1.2rem; opacity: 0.9;">
+                    Hãy đến với chúng tôi để trải nghiệm dịch vụ tốt nhất
+                </p>
+
+                <div class="contact-info-grid">
+                    <div class="contact-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>Địa chỉ</h3>
+                        <p>123 Đường ABC, Quận 1, TP.Hồ Chí Minh</p>
+                    </div>
+
+                    <div class="contact-card">
+                        <i class="fas fa-phone"></i>
+                        <h3>Điện thoại</h3>
+                        <p><a href="tel:0123456789">0123 456 789</a><br>
+                            <a href="tel:0987654321">0987 654 321</a>
+                        </p>
+                    </div>
+
+                    <div class="contact-card">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email</h3>
+                        <p><a href="mailto:info@2fate.com">info@2fate.com</a><br>
+                            <a href="mailto:support@2fate.com">support@2fate.com</a>
+                        </p>
+                    </div>
+
+                    <div class="contact-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Giờ làm việc</h3>
+                        <p>Thứ 2 - Thứ 7: 8:00 - 20:00<br>
+                            Chủ nhật: 9:00 - 17:00</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAT WIDGET (chỉ hiển thị khi đã đăng nhập) -->
+        <% if (user) { %>
+            <div class="chat-widget">
+                <button id="chatToggleBtn" class="chat-toggle-btn">
+                    <i class="fas fa-comments"></i>
+                    <span id="chatBadge" class="chat-badge">0</span>
+                </button>
+
+                <div id="chatWindow" class="chat-window">
+                    <div class="chat-window-header">
+                        <h3>
+                            <i class="fas fa-headset"></i>
+                            Chat hỗ trợ
+                        </h3>
+                        <button id="chatCloseBtn" class="chat-close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div id="chatMessagesArea" class="chat-messages-area"></div>
+
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <textarea id="chatInput" placeholder="Nhập tin nhắn..." rows="1"
+                                onkeypress="handleChatKeyPress(event)" oninput="autoResizeChatInput(this)"></textarea>
+                            <button id="chatSendBtn" class="chat-send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+
+                <%- include('partials/footer') %>
+
+                    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+                    <% if (user) { %>
+                        <script>
+                            /* ========= CHAT WIDGET ========= */
+                            const socket = io();
+                            const userId = '<%= user.id %>';
+                            const username = '<%= user.username %>';
+
+                            const chatToggleBtn = document.getElementById('chatToggleBtn');
+                            const chatWindow = document.getElementById('chatWindow');
+                            const chatCloseBtn = document.getElementById('chatCloseBtn');
+                            const chatMessagesArea = document.getElementById('chatMessagesArea');
+                            const chatInput = document.getElementById('chatInput');
+                            const chatSendBtn = document.getElementById('chatSendBtn');
+                            const chatBadge = document.getElementById('chatBadge');
+
+                            let unreadCount = 0;
+                            let chatHistory = [];
+
+                            // Load chat history từ localStorage
+                            function loadChatHistory() {
+                                const saved = localStorage.getItem(`chat_history_${userId}`);
+                                if (saved) {
+                                    chatHistory = JSON.parse(saved);
+                                    renderMessages();
+                                } else {
+                                    showWelcomeMessage();
+                                }
+                            }
+
+                            function saveChatHistory() {
+                                localStorage.setItem(`chat_history_${userId}`, JSON.stringify(chatHistory));
+                            }
+
+                            function showWelcomeMessage() {
+                                chatMessagesArea.innerHTML = `
+                    <div class="welcome-message">
+                        <i class="fas fa-comments"></i>
+                        <h4>Chào mừng bạn đến với chat hỗ trợ!</h4>
+                        <p>Chúng tôi luôn sẵn sàng giúp đỡ bạn. Hãy gửi tin nhắn và chúng tôi sẽ phản hồi sớm nhất có thể.</p>
+                    </div>
+                `;
+                            }
+
+                            function renderMessages() {
+                                if (chatHistory.length === 0) {
+                                    showWelcomeMessage();
+                                    return;
+                                }
+
+                                chatMessagesArea.innerHTML = '';
+                                chatHistory.forEach(msg => {
+                                    appendMessageToDOM(msg);
+                                });
+                                scrollToBottom();
+                            }
+
+                            function appendMessageToDOM(data) {
+                                const messageDiv = document.createElement('div');
+                                messageDiv.className = `chat-message ${data.type}`;
+
+                                const time = new Date(data.created_at).toLocaleTimeString('vi-VN', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+
+                                messageDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-${data.type === 'user' ? 'user' : 'headset'}"></i>
+                    </div>
+                    <div class="message-bubble">
+                        <div class="message-text">${escapeHtml(data.message)}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+
+                                chatMessagesArea.appendChild(messageDiv);
+                            }
+
+                            function escapeHtml(text) {
+                                const div = document.createElement('div');
+                                div.textContent = text;
+                                return div.innerHTML;
+                            }
+
+                            function scrollToBottom() {
+                                chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight;
+                            }
+
+                            // Toggle chat window
+                            chatToggleBtn.addEventListener('click', () => {
+                                chatWindow.classList.add('active');
+                                unreadCount = 0;
+                                chatBadge.style.display = 'none';
+                                chatBadge.textContent = '0';
+                                chatInput.focus();
+                            });
+
+                            chatCloseBtn.addEventListener('click', () => {
+                                chatWindow.classList.remove('active');
+                            });
+
+                            // Send message
+                            function sendChatMessage() {
+                                const message = chatInput.value.trim();
+                                if (!message) return;
+
+                                const messageData = {
+                                    type: 'user',
+                                    message: message,
+                                    created_at: new Date().toISOString()
+                                };
+
+                                chatHistory.push(messageData);
+                                saveChatHistory();
+                                appendMessageToDOM(messageData);
+                                scrollToBottom();
+
+                                socket.emit('user_message', {
+                                    userId: userId,
+                                    username: username,
+                                    message: message
+                                });
+
+                                chatInput.value = '';
+                                chatInput.style.height = 'auto';
+                            }
+
+                            chatSendBtn.addEventListener('click', sendChatMessage);
+
+                            function handleChatKeyPress(event) {
+                                if (event.key === 'Enter' && !event.shiftKey) {
+                                    event.preventDefault();
+                                    sendChatMessage();
+                                }
+                            }
+
+                            function autoResizeChatInput(textarea) {
+                                textarea.style.height = 'auto';
+                                textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+                            }
+
+                            // Receive admin message
+                            socket.on('admin_message', (data) => {
+                                const messageData = {
+                                    type: 'admin',
+                                    message: data.message,
+                                    created_at: data.created_at || new Date().toISOString()
+                                };
+
+                                chatHistory.push(messageData);
+                                saveChatHistory();
+                                appendMessageToDOM(messageData);
+                                scrollToBottom();
+
+                                if (!chatWindow.classList.contains('active')) {
+                                    unreadCount++;
+                                    chatBadge.textContent = unreadCount;
+                                    chatBadge.style.display = 'flex';
+                                }
+
+                                // Notification
+                                if ('Notification' in window && Notification.permission === 'granted') {
+                                    new Notification('Tin nhắn mới từ Admin', {
+                                        body: data.message.substring(0, 100),
+                                        icon: '/images/logo.png'
+                                    });
+                                }
+                            });
+
+                            socket.on('message_sent', (data) => {
+                                console.log('✅ Tin nhắn đã gửi:', data);
+                            });
+
+                            // Init
+                            loadChatHistory();
+
+                            // Request notification permission
+                            if ('Notification' in window && Notification.permission === 'default') {
+                                Notification.requestPermission();
+                            }
+                        </script>
+                        <% } %>
+</body>
+
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt - 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/global.js" defer></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color, #f9f9f9);
+            color: var(--text-color, #333);
+            transition: all 0.3s ease;
+            padding-top: 80px;
+        }
+
+        .settings-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: var(--container-bg, #fff);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .setting-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .setting-section:last-child {
+            border-bottom: none;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        select,
+        input[type="checkbox"] {
+            margin-top: 8px;
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button.save-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button.save-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --bg-color: #1c1c1c;
+            --text-color: #f1f1f1;
+            --container-bg: #2a2a2a;
+        }
+
+        /* Light Mode */
+        body.light-mode {
+            --bg-color: #ffffff;
+            --text-color: #222;
+            --container-bg: #fff;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-home a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <div class="settings-container">
+            <h1 id="title">Cài đặt tài khoản</h1>
+
+            <div class="setting-section">
+                <label for="language" id="langLabel">🌐 Ngôn ngữ</label>
+                <select id="language">
+                    <option value="vi">Tiếng Việt</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+
+            <div class="setting-section">
+                <label id="themeLabel">🌙 Giao diện</label>
+                <div class="theme-toggle">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span id="darkText">Bật chế độ tối</span>
+                </div>
+            </div>
+
+            <div class="setting-section">
+                <label id="notifLabel">🔔 Thông báo</label>
+                <div>
+                    <input type="checkbox" id="emailNotify" checked>
+                    <span id="emailText">Nhận thông báo qua Email</span>
+                </div>
+                <div>
+                    <input type="checkbox" id="promoNotify">
+                    <span id="promoText">Nhận thông báo khuyến mãi</span>
+                </div>
+            </div>
+
+            <button class="save-btn" id="saveBtn" onclick="saveSettings()">Lưu thay đổi</button>
+
+            <div class="back-home">
+                <a href="/" id="backHome">⬅ Quay lại trang chủ</a>
+            </div>
+        </div>
+
+        <script>
+            const translations = {
+                vi: {
+                    title: "Cài đặt tài khoản",
+                    langLabel: "🌐 Ngôn ngữ",
+                    themeLabel: "🌙 Giao diện",
+                    darkText: "Bật chế độ tối",
+                    notifLabel: "🔔 Thông báo",
+                    emailText: "Nhận thông báo qua Email",
+                    promoText: "Nhận thông báo khuyến mãi",
+                    saveBtn: "Lưu thay đổi",
+                    backHome: "⬅ Quay lại trang chủ",
+                    saved: "✅ Cài đặt đã được lưu!"
+                },
+                en: {
+                    title: "Account Settings",
+                    langLabel: "🌐 Language",
+                    themeLabel: "🌙 Theme",
+                    darkText: "Enable Dark Mode",
+                    notifLabel: "🔔 Notifications",
+                    emailText: "Receive Email Notifications",
+                    promoText: "Receive Promotional Offers",
+                    saveBtn: "Save Changes",
+                    backHome: "⬅ Back to Home",
+                    saved: "✅ Settings saved!"
+                }
+            };
+
+            let currentLang = localStorage.getItem("lang") || "vi";
+
+            function applyLanguage() {
+                const t = translations[currentLang];
+                for (let key in t) {
+                    const el = document.getElementById(key);
+                    if (el) el.textContent = t[key];
+                }
+            }
+
+            function applyTheme() {
+                const darkMode = localStorage.getItem("darkMode") === "true";
+                document.body.classList.remove("dark-mode", "light-mode");
+                document.body.classList.add(darkMode ? "dark-mode" : "light-mode");
+                document.getElementById("darkModeToggle").checked = darkMode;
+            }
+
+            function saveSettings() {
+                const lang = document.getElementById('language').value;
+                const darkMode = document.getElementById('darkModeToggle').checked;
+
+                localStorage.setItem('lang', lang);
+                localStorage.setItem('darkMode', darkMode);
+
+                currentLang = lang;
+                applyLanguage();
+                applyTheme();
+
+                alert(translations[currentLang].saved);
+                setTimeout(() => location.reload(), 500);
+            }
+
+            window.addEventListener("load", () => {
+                document.getElementById("language").value = currentLang;
+                applyLanguage();
+                applyTheme();
+            });
+        </script>
+</body>
+
+</html>

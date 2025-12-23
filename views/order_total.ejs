@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng của tôi - 2FATE Motor</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f5f6fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .order-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 100px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            padding: 40px 50px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            color: #222;
+            font-weight: 700;
+        }
+
+        .order-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            transition: all 0.25s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .order-header h3 {
+            font-size: 18px;
+            margin: 0;
+            color: #333;
+        }
+
+        .order-status {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .status-pending {
+            background-color: #f1c40f;
+        }
+
+        .status-success {
+            background-color: #27ae60;
+        }
+
+        .status-cancelled {
+            background-color: #e74c3c;
+        }
+
+        .order-info {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .order-items {
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .order-item span {
+            color: #333;
+        }
+
+        .total {
+            text-align: right;
+            font-weight: 700;
+            color: #111;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .order-container {
+                width: 95%;
+                padding: 25px;
+            }
+
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .total {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <div class="order-container">
+            <h2>📦 Đơn hàng của tôi</h2>
+
+            <% if (orders.length===0) { %>
+                <p style="text-align:center; color:#888;">Bạn chưa có đơn hàng nào.</p>
+                <% } else { %>
+                    <% orders.forEach(order=> { %>
+                        <div class="order-card">
+                            <div class="order-header">
+                                <h3>Đơn hàng #<%= order.id %>
+                                </h3>
+
+                                <% let statusClass="status-pending" ; if(order.status==="Hoàn thành" )
+                                    statusClass="status-success" ; if(order.status==="Đã hủy" )
+                                    statusClass="status-cancelled" ; %>
+                                    <span class="order-status <%= statusClass %>">
+                                        <%= order.status %>
+                                    </span>
+                            </div>
+
+                            <div class="order-info">
+                                <p>📅 Ngày đặt: <%= new Date(order.created_at).toLocaleDateString("vi-VN") %>
+                                </p>
+                            </div>
+
+                            <div class="order-items">
+                                <% let items=[]; try { if (order.items) items=JSON.parse(order.items); } catch (e) {
+                                    items=[]; } %>
+
+                                    <% if (items.length> 0) { %>
+                                        <% items.forEach(item=> { %>
+                                            <div class="order-item">
+                                                <span>
+                                                    <%= item.name %> (x<%= item.quantity %>)
+                                                </span>
+                                                <span>
+                                                    <%= item.price.toLocaleString() %> ₫
+                                                </span>
+                                            </div>
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <p><em>Không có sản phẩm nào trong đơn hàng này.</em></p>
+                                                    <% } %>
+                            </div>
+
+                            <p class="total">Tổng tiền: <%= order.total_price.toLocaleString() %> ₫</p>
+                        </div>
+                        <% }) %>
+                            <% } %>
+        </div>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>
